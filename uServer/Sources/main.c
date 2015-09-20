@@ -35,7 +35,7 @@
 #include "fsl_os_abstraction.h"
 #include "board.h"
 
-//#include "fapp.h"
+#include "fapp.h"
 //#include "FnetIpStack.h"
 //FnetIpStack fnetIpStack;
 
@@ -68,14 +68,17 @@ static void MainTask(void *arg)
 
 static void FnetTask()
 {
-//   /* Init UART. */
-//    fnet_cpu_serial_init(FNET_CFG_CPU_SERIAL_PORT_DEFAULT, 115200);
-//
-//    /* Enable Interrupts.*/
-//    fnet_cpu_irq_enable(0);
-//
-//   /* Run FNET application. - Function does not return */
-//   fapp_main();
+   /* Init UART. */
+    fnet_cpu_serial_init(FNET_CFG_CPU_SERIAL_PORT_DEFAULT, 115200);
+
+    /* Enable Interrupts.*/
+    fnet_cpu_irq_enable(0);
+
+    // Delay the start of FNET
+    OSA_TimeDelay(1000);
+
+   /* Run FNET application. - Function does not return */
+   fapp_main();
 
    while(1){OSA_TimeDelay(1000);}
 }
@@ -86,7 +89,7 @@ int main (void)
     OSA_Init();
 
     OSA_TaskCreate((task_t)MainTask, (uint8_t*)"Main Task", 1024, NULL, 1, NULL, true, NULL);
-    //OSA_TaskCreate((task_t)FnetTask, (uint8_t*)"FNET Task", 4096, NULL, 2, NULL, true, NULL);
+    OSA_TaskCreate((task_t)FnetTask, (uint8_t*)"FNET Task", 4096, NULL, 2, NULL, true, NULL);
 
     OSA_Start();
 
