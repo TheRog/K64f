@@ -12,15 +12,15 @@
 **                          IAR ANSI C/C++ Compiler for ARM
 **
 **     Reference manual:    K64P144M120SF5RM, Rev.2, January 2014
-**     Version:             rev. 2.8, 2015-02-19
-**     Build:               b150225
+**     Version:             rev. 2.7, 2014-10-14
+**     Build:               b141016
 **
 **     Abstract:
 **         Provides a system configuration function and a global variable that
 **         contains the system frequency. It configures the device and initializes
 **         the oscillator (PLL) that is part of the microcontroller device.
 **
-**     Copyright (c) 2015 Freescale Semiconductor, Inc.
+**     Copyright (c) 2014 Freescale Semiconductor, Inc.
 **     All rights reserved.
 **
 **     Redistribution and use in source and binary forms, with or without modification,
@@ -81,16 +81,14 @@
 **         Update of startup files - possibility to override DefaultISR added.
 **     - rev. 2.7 (2014-10-14)
 **         Interrupt INT_LPTimer renamed to INT_LPTMR0, interrupt INT_Watchdog renamed to INT_WDOG_EWM.
-**     - rev. 2.8 (2015-02-19)
-**         Renamed interrupt vector LLW to LLWU.
 **
 ** ###################################################################
 */
 
 /*!
  * @file MK64F12
- * @version 2.8
- * @date 2015-02-19
+ * @version 2.7
+ * @date 2014-10-14
  * @brief Device specific configuration file for MK64F12 (header file)
  *
  * Provides a system configuration function and a global variable that contains
@@ -110,6 +108,10 @@ extern "C" {
 
 #ifndef DISABLE_WDOG
   #define DISABLE_WDOG                 1
+#endif
+
+#ifndef CLOCK_SETUP
+  #define CLOCK_SETUP                  4
 #endif
 
 /* MCG mode constants */
@@ -173,7 +175,6 @@ extern "C" {
 /* #undef FAST_TRIM_ADDRESS */                             /* Fast oscillator not trimmed. Commented out for MISRA compliance. */
 /* #undef FAST_FINE_TRIM_ADDRESS */                        /* Fast oscillator not trimmed. Commented out for MISRA compliance. */
 
-#ifdef CLOCK_SETUP
 #if (CLOCK_SETUP == 0)
   #define DEFAULT_SYSTEM_CLOCK         20971520u           /* Default System clock value */
   #define MCG_MODE                     MCG_MODE_FEI /* Clock generator mode */
@@ -311,9 +312,6 @@ extern "C" {
   #define SYSTEM_SIM_SOPT1_VALUE       0x00080000U         /* SIM_SOPT1 */
 /* SIM_SOPT2: SDHCSRC=0,TIMESRC=0,RMIISRC=0,USBSRC=0,PLLFLLSEL=1,TRACECLKSEL=0,PTD7PAD=0,FBSL=0,CLKOUTSEL=0,RTCCLKOUTSEL=0 */
   #define SYSTEM_SIM_SOPT2_VALUE       0x00010000U         /* SIM_SOPT2 */
-#endif
-#else
-  #define DEFAULT_SYSTEM_CLOCK         20971520u           /* Default System clock value */
 #endif
 
 /**

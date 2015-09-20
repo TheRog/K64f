@@ -12,15 +12,15 @@
 **                          IAR ANSI C/C++ Compiler for ARM
 **
 **     Reference manual:    K64P144M120SF5RM, Rev.2, January 2014
-**     Version:             rev. 2.8, 2015-02-19
-**     Build:               b150225
+**     Version:             rev. 2.7, 2014-10-14
+**     Build:               b141016
 **
 **     Abstract:
 **         Provides a system configuration function and a global variable that
 **         contains the system frequency. It configures the device and initializes
 **         the oscillator (PLL) that is part of the microcontroller device.
 **
-**     Copyright (c) 2015 Freescale Semiconductor, Inc.
+**     Copyright (c) 2014 Freescale Semiconductor, Inc.
 **     All rights reserved.
 **
 **     Redistribution and use in source and binary forms, with or without modification,
@@ -81,16 +81,14 @@
 **         Update of startup files - possibility to override DefaultISR added.
 **     - rev. 2.7 (2014-10-14)
 **         Interrupt INT_LPTimer renamed to INT_LPTMR0, interrupt INT_Watchdog renamed to INT_WDOG_EWM.
-**     - rev. 2.8 (2015-02-19)
-**         Renamed interrupt vector LLW to LLWU.
 **
 ** ###################################################################
 */
 
 /*!
  * @file MK64F12
- * @version 2.8
- * @date 2015-02-19
+ * @version 2.7
+ * @date 2014-10-14
  * @brief Device specific configuration file for MK64F12 (implementation file)
  *
  * Provides a system configuration function and a global variable that contains
@@ -130,7 +128,18 @@ void SystemInit (void) {
                  WDOG_STCTRLH_CLKSRC_MASK |
                  0x0100U;
 #endif /* (DISABLE_WDOG) */
-#ifdef CLOCK_SETUP
+
+    /*
+     * Enable all of the port clocks. These have to be enabled to configure
+     * pin muxing options, so most code will need all of these on anyway.
+     */
+    SIM_SCGC5 |= (SIM_SCGC5_PORTA_MASK
+                  | SIM_SCGC5_PORTB_MASK
+                  | SIM_SCGC5_PORTC_MASK
+                  | SIM_SCGC5_PORTD_MASK
+                  | SIM_SCGC5_PORTE_MASK 
+                  );
+
   if((RCM->SRS0 & RCM_SRS0_WAKEUP_MASK) != 0x00U)
   {
     if((PMC->REGSC & PMC_REGSC_ACKISO_MASK) != 0x00U)
@@ -300,7 +309,6 @@ void SystemInit (void) {
   if (((SYSTEM_MCG_C6_VALUE) & MCG_C6_LOLIE0_MASK) != 0U) {
     NVIC_EnableIRQ(MCG_IRQn);          /* Enable PLL loss of lock interrupt request */
   }
-#endif
 }
 
 /* ----------------------------------------------------------------------------

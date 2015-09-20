@@ -36,14 +36,12 @@
 #include "board.h"
 
 #include "fapp.h"
-//#include "FnetIpStack.h"
-//FnetIpStack fnetIpStack;
 
-//class TestClass
-//{
-//public:
-//   void Init();
-//};
+class TestClass
+{
+public:
+   void Init();
+};
 
 static void MainTask(void *arg)
 {
