@@ -61,7 +61,6 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\platform\osa\inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\platform\system\inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\FNET\FNET 2.9.0\fnet_stack&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\FNET\FNET 2.9.0\fnet_demos\common\fnet_application&quot;"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input.818527735" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input"/>
 							</tool>
@@ -70,6 +69,7 @@
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths.1509014508" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;../Sources&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../Board&quot;"/>
+									<listOptionValue builtIn="false" value="../fnet_application"/>
 									<listOptionValue builtIn="false" value="&quot;../Project_Settings/Startup_Code&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../SDK/platform/CMSIS/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../SDK/platform/devices&quot;"/>
@@ -85,7 +85,6 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\port\gcc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\config\K64F12\gcc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\FNET\FNET 2.9.0\fnet_stack&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\FNET\FNET 2.9.0\fnet_demos\common\fnet_application&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.1563426779" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="&quot;CPU_MK64FN1M0VMD12&quot;"/>
@@ -96,6 +95,7 @@
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths.636710943" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;../Sources&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../Board&quot;"/>
+									<listOptionValue builtIn="false" value="../fnet_application"/>
 									<listOptionValue builtIn="false" value="&quot;../Project_Settings/Startup_Code&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../SDK/platform/CMSIS/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../SDK/platform/devices&quot;"/>
@@ -111,9 +111,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\port\gcc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\config\K64F12\gcc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\FNET\FNET 2.9.0\fnet_stack&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\FNET\FNET 2.9.0\fnet_demos\common\fnet_application&quot;"/>
 								</option>
-								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs.103884334" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs" valueType="definedSymbols">
+								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs.103884334" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="&quot;CPU_MK64FN1M0VMD12&quot;"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.334239484" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input"/>
