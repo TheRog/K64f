@@ -81,7 +81,7 @@ const gpio_input_pin_user_config_t sdhcCdPin[] = {
     .config.isPullEnable = true,
     .config.pullSelect = kPortPullDown,
     .config.isPassiveFilterEnabled = false,
-    .config.interrupt = kPortIntEitherEdge
+    .config.interrupt = kPortIntDisabled
   },
   {
     .pinName = GPIO_PINS_OUT_OF_RANGE,

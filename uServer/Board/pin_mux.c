@@ -62,6 +62,8 @@
 #include "fsl_sim_hal.h"
 #include "pin_mux.h"
 
+
+
 void configure_can_pins(uint32_t instance)
 {
   /* PORTB_PCR19 */

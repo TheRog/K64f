@@ -86,9 +86,16 @@
 									<listOptionValue builtIn="false" value="&quot;C:\FNET\FNET 2.9.0\fnet_stack&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${PROJECT_KSDK_PATH}\platform\utilities\inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${PROJECT_KSDK_PATH}\platform\devices&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${PROJECT_KSDK_PATH}/platform/composite/src/sdcard&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${PROJECT_KSDK_PATH}/platform/composite/inc&quot;"/>
+									<listOptionValue builtIn="false" value="../fatfs"/>
+									<listOptionValue builtIn="false" value="../fatfs/fsl_sd_disk"/>
+									<listOptionValue builtIn="false" value="&quot;${PROJECT_KSDK_PATH}/platform/utilities/inc&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.1563426779" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="&quot;CPU_MK64FN1M0VMD12&quot;"/>
+									<listOptionValue builtIn="false" value="SD_DISK_ENABLE=1"/>
+									<listOptionValue builtIn="false" value="CD_USING_GPIO"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.1904836387" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input"/>
 							</tool>
@@ -101,8 +108,6 @@
 									<listOptionValue builtIn="false" value="&quot;../SDK/platform/CMSIS/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../SDK/platform/devices&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../SDK/platform/devices/MK64F12/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\platform\utilities\inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\platform\devices&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\platform\drivers\inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\platform\hal\inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\platform\osa\inc&quot;"/>
@@ -112,9 +117,18 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\port\gcc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\config\K64F12\gcc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\FNET\FNET 2.9.0\fnet_stack&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${PROJECT_KSDK_PATH}\platform\utilities\inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${PROJECT_KSDK_PATH}\platform\devices&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${PROJECT_KSDK_PATH}/platform/composite/src/sdcard&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${PROJECT_KSDK_PATH}/platform/composite/inc&quot;"/>
+									<listOptionValue builtIn="false" value="../fatfs"/>
+									<listOptionValue builtIn="false" value="../fatfs/fsl_sd_disk"/>
+									<listOptionValue builtIn="false" value="&quot;${PROJECT_KSDK_PATH}/platform/utilities/inc&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs.103884334" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="&quot;CPU_MK64FN1M0VMD12&quot;"/>
+									<listOptionValue builtIn="false" value="SD_DISK_ENABLE=1"/>
+									<listOptionValue builtIn="false" value="CD_USING_GPIO"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.334239484" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input"/>
 							</tool>

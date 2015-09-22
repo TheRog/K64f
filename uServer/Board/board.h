@@ -139,6 +139,14 @@
 /* The i2c instance used for i2c communication demo */
 #define BOARD_I2C_COMM_INSTANCE         0
 
+
+/* The i2c instance for the FXOS8700 accelerometer/magnetometer */
+#define BOARD_I2C_FXOS8700CQ_INSTANCE   0
+
+/* The pin instance for the SD Card detect pin */
+#define BOARD_SDHC_GPIO_INSTANCE kGpioSdhc0Cd
+
+
 /* The Flextimer instance/channel used for board */
 #define BOARD_FTM_INSTANCE              0
 #define BOARD_FTM_CHANNEL               0
