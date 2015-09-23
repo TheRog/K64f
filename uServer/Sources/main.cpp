@@ -37,6 +37,7 @@
 
 #include "fapp.h"
 
+#include "fsl_debug_console.h"
 #include "fsl_mpu_hal.h"
 #include "fsl_fxos8700_driver.h"
 #include "diskio.h"
@@ -144,7 +145,9 @@ static void SdCardTask(void *arg)
 
 static void MainTask(void *arg)
 {
-   //printf("\n****** uServer ******\r\n");
+   OSA_TimeDelay(1000);
+
+   debug_printf("\n****** uServer ******\r\n");
 
    LED1_EN; LED2_EN; LED3_EN;
 
@@ -161,7 +164,7 @@ static void MainTask(void *arg)
       LED3_TOGGLE; OSA_TimeDelay(50);
       LED2_TOGGLE; OSA_TimeDelay(50);
 
-      OSA_TimeDelay(300);
+      OSA_TimeDelay(700);
    }
 }
 
@@ -188,7 +191,7 @@ int main (void)
     OSA_Init();
 
     /* Initialize clocks, debug console interface and configure required pins */
-    //hardware_init();
+    hardware_init();
 
     OSA_TaskCreate((task_t)MainTask, (uint8_t*)"Main Task", 1024, NULL, 1, NULL, true, NULL);
     //OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 2048, NULL, 2, NULL, true, NULL);
