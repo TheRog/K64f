@@ -144,6 +144,8 @@ static void SdCardTask(void *arg)
 
 static void MainTask(void *arg)
 {
+   printf("\n****** uServer ******\r\n");
+
    LED1_EN; LED2_EN; LED3_EN;
 
    int counter = 0;
@@ -186,10 +188,10 @@ int main (void)
     OSA_Init();
 
     /* Initialize clocks, debug console interface and configure required pins */
-    hardware_init();
+    //hardware_init();
 
     OSA_TaskCreate((task_t)MainTask, (uint8_t*)"Main Task", 1024, NULL, 1, NULL, true, NULL);
-    OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 2048, NULL, 2, NULL, true, NULL);
+    //OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 2048, NULL, 2, NULL, true, NULL);
     //OSA_TaskCreate((task_t)FnetTask, (uint8_t*)"FNET Task", 4096, NULL, 3, NULL, true, NULL);
 
     OSA_Start();

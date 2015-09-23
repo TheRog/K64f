@@ -36,27 +36,27 @@
 void hardware_init(void) {
 	uint8_t i;
 
-	/* enable clock for PORTs */
-	for (i = 0; i < PORT_INSTANCE_COUNT; i++)
-	{
-		CLOCK_SYS_EnablePortClock(i);
-	}
-
-	/* Configure SD Card detect pin */
-	configure_gpio_pins(GPIO_EXTRACT_PORT(BOARD_SDHC_GPIO_INSTANCE));
-
-	/* Configure safe remove pin */
-	configure_gpio_pins(GPIO_EXTRACT_PORT(kGpioSW3));
-
-	/* Configure SDHC module pins */
-	configure_sdhc_pins(BOARD_SDHC_INSTANCE);
-
-	/* Enable I2C pins */
-	configure_i2c_pins(BOARD_I2C_FXOS8700CQ_INSTANCE);
+//	/* enable clock for PORTs */
+//	for (i = 0; i < PORT_INSTANCE_COUNT; i++)
+//	{
+//		CLOCK_SYS_EnablePortClock(i);
+//	}
+//
+//	/* Configure SD Card detect pin */
+//	configure_gpio_pins(GPIO_EXTRACT_PORT(BOARD_SDHC_GPIO_INSTANCE));
+//
+//	/* Configure safe remove pin */
+//	configure_gpio_pins(GPIO_EXTRACT_PORT(kGpioSW3));
+//
+//	/* Configure SDHC module pins */
+//	configure_sdhc_pins(BOARD_SDHC_INSTANCE);
+//
+//	/* Enable I2C pins */
+//	configure_i2c_pins(BOARD_I2C_FXOS8700CQ_INSTANCE);
 
 	/* Init board clock */
-	BOARD_ClockInit();
-	dbg_uart_init();
+	//BOARD_ClockInit();
+	//dbg_uart_init();
 }
 
 
