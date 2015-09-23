@@ -144,7 +144,7 @@ static void SdCardTask(void *arg)
 
 static void MainTask(void *arg)
 {
-   printf("\n****** uServer ******\r\n");
+   //printf("\n****** uServer ******\r\n");
 
    LED1_EN; LED2_EN; LED3_EN;
 
