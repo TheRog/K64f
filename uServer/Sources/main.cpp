@@ -138,7 +138,7 @@ static void SdCardTask(void *arg)
       }
 
       /* Wait 1 second to read and log new data */
-      OSA_TimeDelay(1000);
+      OSA_TimeDelay(500);
    }
 }
 
@@ -169,14 +169,14 @@ static void MainTask(void *arg)
 
 static void FnetTask()
 {
+   // Delay the start of FNET
+   OSA_TimeDelay(4000);
+
    /* Init UART. */
-    fnet_cpu_serial_init(FNET_CFG_CPU_SERIAL_PORT_DEFAULT, 115200);
+    //fnet_cpu_serial_init(FNET_CFG_CPU_SERIAL_PORT_DEFAULT, 115200);
 
     /* Enable Interrupts.*/
     fnet_cpu_irq_enable(0);
-
-    // Delay the start of FNET
-    OSA_TimeDelay(1000);
 
    /* Run FNET application. - Function does not return */
    fapp_main();
@@ -193,8 +193,8 @@ int main (void)
     hardware_init();
 
     OSA_TaskCreate((task_t)MainTask, (uint8_t*)"Main Task", 1024, NULL, 1, NULL, true, NULL);
-    OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 2048, NULL, 2, NULL, true, NULL);
-    //OSA_TaskCreate((task_t)FnetTask, (uint8_t*)"FNET Task", 4096, NULL, 3, NULL, true, NULL);
+    //OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 2048, NULL, 2, NULL, true, NULL);
+    OSA_TaskCreate((task_t)FnetTask, (uint8_t*)"FNET Task", 4096, NULL, 3, NULL, true, NULL);
 
     OSA_Start();
 
