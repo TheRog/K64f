@@ -26,6 +26,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>fnet_stack</name>
+			<type>2</type>
+			<locationURI>PARENT-4-PROJECT_LOC/FNET/FNET%202.9.0/fnet_stack</locationURI>
+		</link>
+		<link>
 			<name>free-rtos</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>

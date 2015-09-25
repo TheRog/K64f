@@ -34,6 +34,7 @@
 #include "diskio.h"
 #include "board.h"
 #include "ff.h"
+#include "fapp.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -144,6 +145,24 @@ static void SdCardTask(void *arg)
 	}
 }
 
+static void FnetTask()
+{
+   // Delay the start of FNET
+   OSA_TimeDelay(5000);
+
+   /* Init UART. */
+    //fnet_cpu_serial_init(FNET_CFG_CPU_SERIAL_PORT_DEFAULT, 115200);
+   fnet_cpu_serial_init(4, 115200);
+
+    /* Enable Interrupts.*/
+   fnet_cpu_irq_enable(0);
+
+   /* Run FNET application. - Function does not return */
+   fapp_main();
+
+   while(1){OSA_TimeDelay(1000);}
+}
+
 static void MainTask(void *arg)
 {
    OSA_TimeDelay(500);
@@ -176,8 +195,9 @@ int main (void)
    /* Initialize clocks, debug console interface and configure required pins */
    hardware_init();
 
-   OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 2048, NULL, 1, NULL, true, NULL);
+   OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 1024, NULL, 1, NULL, true, NULL);
    OSA_TaskCreate((task_t)MainTask,   (uint8_t*)"Main Task",    1024, NULL, 2, NULL, true, NULL);
+   OSA_TaskCreate((task_t)FnetTask,   (uint8_t*)"FNET Task",    2048, NULL, 3, NULL, true, NULL);
 
    OSA_Start();
 

@@ -47,6 +47,10 @@
 							<builder buildPath="${workspace_loc:/K64_FatFs_KSDK}/Debug" id="ilg.gnuarmeclipse.managedbuild.cross.builder.1589361500" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="ilg.gnuarmeclipse.managedbuild.cross.builder"/>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.1027562872" name="Cross ARM GNU Assembler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor.2102361419" name="Use preprocessor" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor" value="true" valueType="boolean"/>
+								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths.1786953814" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;C:\FNET\FNET 2.9.0\fnet_stack&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Sources}&quot;"/>
+								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input.1133181546" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input"/>
 							</tool>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.945554339" name="Cross ARM C Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler">
@@ -81,6 +85,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\port\gcc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\config\K64F12\gcc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\FNET\FNET 2.9.0\fnet_stack&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.1999170936" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_DEBUG=1"/>
@@ -123,6 +128,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\port\gcc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\config\K64F12\gcc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\FNET\FNET 2.9.0\fnet_stack&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/fnet_application}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs.612037757" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_DEBUG=1"/>
