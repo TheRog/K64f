@@ -141,20 +141,19 @@ static void SdCardTask(void *arg)
 		}
 
 		/* Wait 1 second to read and log new data */
-		OSA_TimeDelay(1000);
+		OSA_TimeDelay(200);
 	}
 }
 
 static void FnetTask()
 {
    // Delay the start of FNET
-   OSA_TimeDelay(5000);
+   OSA_TimeDelay(4000);
 
    /* Init UART. */
-    //fnet_cpu_serial_init(FNET_CFG_CPU_SERIAL_PORT_DEFAULT, 115200);
-   fnet_cpu_serial_init(4, 115200);
+   fnet_cpu_serial_init(FNET_CFG_CPU_SERIAL_PORT_DEFAULT, 115200);
 
-    /* Enable Interrupts.*/
+   /* Enable Interrupts.*/
    fnet_cpu_irq_enable(0);
 
    /* Run FNET application. - Function does not return */
@@ -165,7 +164,7 @@ static void FnetTask()
 
 static void MainTask(void *arg)
 {
-   OSA_TimeDelay(500);
+   OSA_TimeDelay(100);
 
    debug_printf("\n****** uServer ******\r\n");
 
