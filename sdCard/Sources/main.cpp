@@ -94,7 +94,7 @@ int main(void)
 #endif
 
 	/* Initialize SDHC driver and SD Card */
-	ds = disk_initialize(SD);
+	ds = (DRESULT)disk_initialize(SD);
 	if(ds)
 	{
 		printf("\nFailed to initialize SD disk\r\n");
