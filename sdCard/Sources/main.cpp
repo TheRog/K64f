@@ -37,6 +37,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "fsl_debug_console.h"
+
 #if (defined(TWR_K64F120M) || defined(FRDM_K64F) || defined(TWR_K60D100M) || \
 	defined(TWR_K21F120M) || defined(TWR_K65F180M))
 #include "fsl_mpu_hal.h"
@@ -48,7 +50,7 @@ void int16tostr (int16_t num, char* str_buff);
 
 FATFS FatFs;	/* FatFs system object */
 
-int main(void)
+static void SdCardTask(void *arg)
 {
 	FRESULT fr;		/* FatFs return code */
 	DRESULT ds;		/* Disk functions return code */
@@ -56,9 +58,6 @@ int main(void)
 	fxos_data_t sensorData;
 	fxos_handler_t i2cModule;
 	int16_t xData, yData, zData;
-
-	/* Initialize Operating System Abstraction layer */
-	OSA_Init();
 
 	/* Initialize clocks, debug console interface and configure required pins */
 	hardware_init();
@@ -73,19 +72,19 @@ int main(void)
 	/* Initialize safe removal pin (SW3 = PTA4) */
 	GPIO_DRV_InputPinInit(&switchPins[1]);
 
-	printf("\n****** KSDK: FatFs + SD CARD demo ******\r\n");
+	debug_printf("\n****** KSDK: FatFs + SD CARD demo ******\r\n");
 
 	if(!sdhc_detect())
 	{
-		printf("\nPlease insert SD Card\r\n");
+	   debug_printf("\nPlease insert SD Card\r\n");
 
 		/* Wait for SD Card insertion */
 		while (!sdhc_detect());
 	}
 
-	printf("\nSD Card inserted\r\n");
+	debug_printf("\nSD Card inserted\r\n");
 
-	printf("\nInitializing SD Card...\r\n");
+	debug_printf("\nInitializing SD Card...\r\n");
 
 #if (defined(TWR_K64F120M) || defined(FRDM_K64F) || defined(TWR_K60D100M) || \
 	defined(TWR_K21F120M) || defined(TWR_K65F180M))
@@ -97,24 +96,24 @@ int main(void)
 	ds = (DRESULT)disk_initialize(SD);
 	if(ds)
 	{
-		printf("\nFailed to initialize SD disk\r\n");
+	   debug_printf("\nFailed to initialize SD disk\r\n");
 		for(;;){}
 	}
 
 	/* Select current logical device driver (0 = USB, 1 = SD) */
 	fr = f_chdrive(SD);
-	printf("\nMounting file system to SD Card volume...\r\n");
+	debug_printf("\nMounting file system to SD Card volume...\r\n");
 
 	/* Mount file system to the SDCARD volume */
 	fr = f_mount(SD, &FatFs);
 	if(fr)
 	{
-		printf("\nError mounting file system\r\n");
+	   debug_printf("\nError mounting file system\r\n");
 		for(;;){}
 	}
 
-	printf("\nLogging accelerometer values... \r\n");
-	printf("\nNOTE: To safely remove SD Card, press and hold SW3\r\n");
+	debug_printf("\nLogging accelerometer values... \r\n");
+	debug_printf("\nNOTE: To safely remove SD Card, press and hold SW3\r\n");
 
 	for (;;)
 	{
@@ -126,12 +125,12 @@ int main(void)
 		yData = (int16_t)((sensorData.accelYMSB << 8) | sensorData.accelYLSB);
 		zData = (int16_t)((sensorData.accelZMSB << 8) | sensorData.accelZLSB);
 
-		printf("\nx = %d  y = %d  z = %d\r\n", xData, yData, zData);
+		debug_printf("\nx = %d  y = %d  z = %d\r\n", xData, yData, zData);
 
 		/* Check SW3 pin state */
 		if(GPIO_DRV_ReadPinInput(switchPins[1].pinName) == 0)
 		{
-			printf("\nHold SW3 pressed and remove SD Card\r\n");
+		   debug_printf("\nHold SW3 pressed and remove SD Card\r\n");
 			while(GPIO_DRV_ReadPinInput(switchPins[1].pinName) == 0);
 		}
 
@@ -144,7 +143,19 @@ int main(void)
 		/* Wait 1 second to read and log new data */
 		OSA_TimeDelay(1000);
 	}
-	return 0;
+}
+
+int main (void)
+{
+   OSA_Init();
+
+   OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 2048, NULL, 1, NULL, true, NULL);
+
+   OSA_Start();
+
+   while(1);
+
+   return(0);
 }
 
 /*FUNCTION*----------------------------------------------------------------

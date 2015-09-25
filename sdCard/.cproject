@@ -147,7 +147,6 @@
 									<listOptionValue builtIn="false" value="&quot;MK64FN1M0xxx12_flash.ld&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.otherobjs.1540132924" name="Other objects" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.otherobjs" valueType="userObjs">
-									<listOptionValue builtIn="false" value="&quot;${KSDK_PATH}/lib/ksdk_platform_lib/kds/K64F12/debug/libksdk_platform.a&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\lib\ksdk_freertos_lib\kds\K64F12\debug\libksdk_platform_freertos.a&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.libs.1618023344" name="Libraries (-l)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.libs" valueType="libs">
