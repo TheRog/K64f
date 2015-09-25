@@ -59,8 +59,7 @@ static void SdCardTask(void *arg)
 	fxos_handler_t i2cModule;
 	int16_t xData, yData, zData;
 
-	/* Initialize clocks, debug console interface and configure required pins */
-	hardware_init();
+	OSA_TimeDelay(1000);
 
 	/* Initialize the FXOS8700CQ */
 	i2cModule.i2cInstance = BOARD_I2C_FXOS8700CQ_INSTANCE;
@@ -145,11 +144,40 @@ static void SdCardTask(void *arg)
 	}
 }
 
+static void MainTask(void *arg)
+{
+   OSA_TimeDelay(500);
+
+   debug_printf("\n****** uServer ******\r\n");
+
+   LED1_EN; LED2_EN; LED3_EN;
+
+   int counter = 0;
+   while(1)
+   {
+      counter++;
+
+      LED1_TOGGLE; OSA_TimeDelay(50);
+      LED3_TOGGLE; OSA_TimeDelay(50);
+      LED2_TOGGLE; OSA_TimeDelay(50);
+
+      LED1_TOGGLE; OSA_TimeDelay(50);
+      LED3_TOGGLE; OSA_TimeDelay(50);
+      LED2_TOGGLE; OSA_TimeDelay(50);
+
+      OSA_TimeDelay(700);
+   }
+}
+
 int main (void)
 {
    OSA_Init();
 
+   /* Initialize clocks, debug console interface and configure required pins */
+   hardware_init();
+
    OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 2048, NULL, 1, NULL, true, NULL);
+   OSA_TaskCreate((task_t)MainTask,   (uint8_t*)"Main Task",    1024, NULL, 2, NULL, true, NULL);
 
    OSA_Start();
 
