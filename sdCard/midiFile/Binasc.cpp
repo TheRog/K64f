@@ -12,6 +12,7 @@
 #include "Binasc.h"
 #include <sstream>
 #include <string.h>
+#include <stdlib.h>
 
 //////////////////////////////
 //
@@ -206,14 +207,14 @@ int Binasc::writeToBinary(const string& outfile, const string& infile) {
    ifstream input;
    input.open(infile.data());
    if (!input.is_open()) {
-      cerr << "Cannot open " << infile << " for reading in binasc." << endl;
+//      cerr << "Cannot open " << infile << " for reading in binasc." << endl;
       return 0;
    }
    
    ofstream output;
    output.open(outfile.data());
    if (!output.is_open()) {
-      cerr << "Cannot open " << outfile << " for reading in binasc." << endl;
+//      cerr << "Cannot open " << outfile << " for reading in binasc." << endl;
       return 0;
    }
   
@@ -228,7 +229,7 @@ int Binasc::writeToBinary(const string& outfile, istream& input) {
    ofstream output;
    output.open(outfile.data());
    if (!output.is_open()) {
-      cerr << "Cannot open " << outfile << " for reading in binasc." << endl;
+//      cerr << "Cannot open " << outfile << " for reading in binasc." << endl;
       return 0;
    }
   
@@ -242,7 +243,7 @@ int Binasc::writeToBinary(ostream& out, const string& infile) {
    ifstream input;
    input.open(infile.data());
    if (!input.is_open()) {
-      cerr << "Cannot open " << infile << " for reading in binasc." << endl;
+//      cerr << "Cannot open " << infile << " for reading in binasc." << endl;
       return 0;
    }
    
@@ -278,14 +279,14 @@ int Binasc::readFromBinary(const string& outfile, const string& infile) {
    ifstream input;
    input.open(infile.data());
    if (!input.is_open()) {
-      cerr << "Cannot open " << infile << " for reading in binasc." << endl;
+//      cerr << "Cannot open " << infile << " for reading in binasc." << endl;
       return 0;
    }
 
    ofstream output;
    output.open(outfile.data());
    if (!output.is_open()) {
-      cerr << "Cannot open " << outfile << " for reading in binasc." << endl;
+//      cerr << "Cannot open " << outfile << " for reading in binasc." << endl;
       return 0;
    }
 
@@ -300,7 +301,7 @@ int Binasc::readFromBinary(const string& outfile, istream& input) {
    ofstream output;
    output.open(outfile.data());
    if (!output.is_open()) {
-      cerr << "Cannot open " << outfile << " for reading in binasc." << endl;
+//      cerr << "Cannot open " << outfile << " for reading in binasc." << endl;
       return 0;
    }
 
@@ -314,7 +315,7 @@ int Binasc::readFromBinary(ostream& out, const string& infile) {
    ifstream input;
    input.open(infile.data());
    if (!input.is_open()) {
-      cerr << "Cannot open " << infile << " for reading in binasc." << endl;
+//      cerr << "Cannot open " << infile << " for reading in binasc." << endl;
       return 0;
    }
 
@@ -410,7 +411,7 @@ int Binasc::outputStyleBinary(ostream& out, istream& input) {
 
    ch = input.get();
    if (input.eof()) {
-      cerr << "End of the file right away!" << endl;
+//      cerr << "End of the file right away!" << endl;
       return 0;
    }
 
@@ -579,7 +580,7 @@ int Binasc::readMidiEvent(ostream& out, istream& infile, int& trackbytes,
    int metatype = 0;
 
 if (command == 0) {
-exit(1);
+while(1);//exit(1);
 }
 
    switch (command & 0xf0) {
@@ -661,8 +662,8 @@ exit(1);
             case 0xfc:
             case 0xfd:
             case 0xfe:
-               cerr << "Error command not yet handled" << endl;
-               exit(1);
+//               cerr << "Error command not yet handled" << endl;
+               while(1);//exit(1);
                break;
             case 0xff:  // meta message
                {
@@ -702,19 +703,19 @@ int Binasc::outputStyleMidi(ostream& out, istream& input) {
    input.read((char*)&ch, 1);
 
    if (input.eof()) {
-      cerr << "End of the file right away!" << endl; 
+//      cerr << "End of the file right away!" << endl;
    }
 
    // Read the MIDI file header
 
    // The first four bytes must be the characters "MThd"
-   if (ch != 'M') { cerr << "Not a MIDI file M" << endl; return 0; }
-   input.read((char*)&ch, 1);
-   if (ch != 'T') { cerr << "Not a MIDI file T" << endl; return 0; }
-   input.read((char*)&ch, 1);
-   if (ch != 'h') { cerr << "Not a MIDI file h" << endl; return 0; }
-   input.read((char*)&ch, 1);
-   if (ch != 'd') { cerr << "Not a MIDI file d" << endl; return 0; }
+//   if (ch != 'M') { cerr << "Not a MIDI file M" << endl; return 0; }
+//   input.read((char*)&ch, 1);
+//   if (ch != 'T') { cerr << "Not a MIDI file T" << endl; return 0; }
+//   input.read((char*)&ch, 1);
+//   if (ch != 'h') { cerr << "Not a MIDI file h" << endl; return 0; }
+//   input.read((char*)&ch, 1);
+//   if (ch != 'd') { cerr << "Not a MIDI file d" << endl; return 0; }
    tempout << "+M +T +h +d";
    if (commentsQ) {
       tempout << "\t\t; MIDI header chunk marker";
@@ -818,13 +819,13 @@ int Binasc::outputStyleMidi(ostream& out, istream& input) {
 
       input.read((char*)&ch, 1);
       // The first four bytes of a track must be the characters "MTrk"
-      if (ch != 'M') { cerr << "Not a MIDI file M2" << endl; return 0; }
-      input.read((char*)&ch, 1);
-      if (ch != 'T') { cerr << "Not a MIDI file T2" << endl; return 0; }
-      input.read((char*)&ch, 1);
-      if (ch != 'r') { cerr << "Not a MIDI file r" << endl; return 0; }
-      input.read((char*)&ch, 1);
-      if (ch != 'k') { cerr << "Not a MIDI file k" << endl; return 0; }
+//      if (ch != 'M') { cerr << "Not a MIDI file M2" << endl; return 0; }
+//      input.read((char*)&ch, 1);
+//      if (ch != 'T') { cerr << "Not a MIDI file T2" << endl; return 0; }
+//      input.read((char*)&ch, 1);
+//      if (ch != 'r') { cerr << "Not a MIDI file r" << endl; return 0; }
+//      input.read((char*)&ch, 1);
+//      if (ch != 'k') { cerr << "Not a MIDI file k" << endl; return 0; }
       tempout << "+M +T +r +k";
       if (commentsQ) {
          tempout << "\t\t; MIDI track chunk marker";
@@ -889,9 +890,9 @@ int Binasc::processDecimalWord(ostream& out, const char* word,
       switch (word[i]) {
          case '\'':
             if (quoteIndex != -1) {
-               cerr << "Error on line " << lineNum << " at token: " << word
-                    << endl;
-               cerr << "extra quote in decimal number" << endl;
+//               cerr << "Error on line " << lineNum << " at token: " << word
+//                    << endl;
+//               cerr << "extra quote in decimal number" << endl;
                return 0;
             } else {
                quoteIndex = i;
@@ -899,32 +900,32 @@ int Binasc::processDecimalWord(ostream& out, const char* word,
             break;
          case '-':
             if (signIndex != -1) {
-               cerr << "Error on line " << lineNum << " at token: " << word
-                    << endl;
-               cerr << "cannot have more than two minus signs in number"
-                    << endl;
+//               cerr << "Error on line " << lineNum << " at token: " << word
+//                    << endl;
+//               cerr << "cannot have more than two minus signs in number"
+//                    << endl;
                return 0;
             } else {
                signIndex = i;
             }
             if (i == 0 || word[i-1] != '\'') {
-               cerr << "Error on line " << lineNum << " at token: " << word
-                    << endl;
-               cerr << "minus sign must immediately follow quote mark" << endl;
+//               cerr << "Error on line " << lineNum << " at token: " << word
+//                    << endl;
+//               cerr << "minus sign must immediately follow quote mark" << endl;
                return 0;
             }
             break;
          case '.':
             if (quoteIndex == -1) {
-               cerr << "Error on line " << lineNum << " at token: " << word
-                    << endl;
-               cerr << "cannot have decimal marker before quote" << endl;
+//               cerr << "Error on line " << lineNum << " at token: " << word
+//                    << endl;
+//               cerr << "cannot have decimal marker before quote" << endl;
                return 0;
             }
             if (periodIndex != -1) {
-               cerr << "Error on line " << lineNum << " at token: " << word
-                    << endl;
-               cerr << "extra period in decimal number" << endl;
+//               cerr << "Error on line " << lineNum << " at token: " << word
+//                    << endl;
+//               cerr << "extra period in decimal number" << endl;
                return 0;
             } else {
                periodIndex = i;
@@ -933,15 +934,15 @@ int Binasc::processDecimalWord(ostream& out, const char* word,
          case 'u':
          case 'U':
             if (quoteIndex != -1) {
-               cerr << "Error on line " << lineNum << " at token: " << word
-                    << endl;
-               cerr << "cannot have endian specified after quote" << endl;
+//               cerr << "Error on line " << lineNum << " at token: " << word
+//                    << endl;
+//               cerr << "cannot have endian specified after quote" << endl;
                return 0;
             }
             if (endianIndex != -1) {
-               cerr << "Error on line " << lineNum << " at token: " << word
-                    << endl;
-               cerr << "extra \"u\" in decimal number" << endl;
+//               cerr << "Error on line " << lineNum << " at token: " << word
+//                    << endl;
+//               cerr << "extra \"u\" in decimal number" << endl;
                return 0;
             } else {
                endianIndex = i;
@@ -950,10 +951,10 @@ int Binasc::processDecimalWord(ostream& out, const char* word,
          case '8':
          case '1': case '2': case '3': case '4':
             if (quoteIndex == -1 && byteCount != -1) {
-               cerr << "Error on line " << lineNum << " at token: " << word
-                    << endl;
-               cerr << "invalid byte specificaton before quote in "
-                    << "decimal number" << endl;
+//               cerr << "Error on line " << lineNum << " at token: " << word
+//                    << endl;
+//               cerr << "invalid byte specificaton before quote in "
+//                    << "decimal number" << endl;
                return 0;
             } else if (quoteIndex == -1) {
                byteCount = word[i] - '0';
@@ -961,18 +962,18 @@ int Binasc::processDecimalWord(ostream& out, const char* word,
             break;
          case '0': case '5': case '6': case '7': case '9':
             if (quoteIndex == -1) {
-               cerr << "Error on line " << lineNum << " at token: " << word
-                    << endl;
-               cerr << "cannot have numbers before quote in decimal number"
-                    << endl;
+//               cerr << "Error on line " << lineNum << " at token: " << word
+//                    << endl;
+//               cerr << "cannot have numbers before quote in decimal number"
+//                    << endl;
                return 0;
             }
             break;
          default:
-            cerr << "Error on line " << lineNum << " at token: " << word
-                 << endl;
-            cerr << "Invalid character in decimal number"
-                    " (character number " << i <<")" << endl;
+//            cerr << "Error on line " << lineNum << " at token: " << word
+//                 << endl;
+//            cerr << "Invalid character in decimal number"
+//                    " (character number " << i <<")" << endl;
             return 0;
       }
    }
@@ -980,22 +981,22 @@ int Binasc::processDecimalWord(ostream& out, const char* word,
    // there must be a quote character to indicate a decimal number
    // and there must be a decimal number after the quote
    if (quoteIndex == -1) {
-      cerr << "Error on line " << lineNum << " at token: " << word
-           << endl;
-      cerr << "there must be a quote to signify a decimal number" << endl;
+//      cerr << "Error on line " << lineNum << " at token: " << word
+//           << endl;
+//      cerr << "there must be a quote to signify a decimal number" << endl;
       return 0;
    } else if (quoteIndex == length - 1) {
-      cerr << "Error on line " << lineNum << " at token: " << word
-           << endl;
-      cerr << "there must be a decimal number after the quote" << endl;
+//      cerr << "Error on line " << lineNum << " at token: " << word
+//           << endl;
+//      cerr << "there must be a decimal number after the quote" << endl;
       return 0;
    }
 
    // 8 byte decimal output can only occur if reading a double number
    if (periodIndex == -1 && byteCount == 8) {
-      cerr << "Error on line " << lineNum << " at token: " << word
-           << endl;
-      cerr << "only floating-point numbers can use 8 bytes" << endl;
+//      cerr << "Error on line " << lineNum << " at token: " << word
+//           << endl;
+//      cerr << "only floating-point numbers can use 8 bytes" << endl;
       return 0;
    }
 
@@ -1028,9 +1029,9 @@ int Binasc::processDecimalWord(ostream& out, const char* word,
            return 1;
            break;
          default:
-            cerr << "Error on line " << lineNum << " at token: " << word
-                 << endl;
-            cerr << "floating-point numbers can be only 4 or 8 bytes" << endl;
+//            cerr << "Error on line " << lineNum << " at token: " << word
+//                 << endl;
+//            cerr << "floating-point numbers can be only 4 or 8 bytes" << endl;
             return 0;
       }
    }
@@ -1044,9 +1045,9 @@ int Binasc::processDecimalWord(ostream& out, const char* word,
       if (signIndex != -1) {
          long tempLong = atoi(&word[quoteIndex + 1]);
          if (tempLong > 127 || tempLong < -128) {
-            cerr << "Error on line " << lineNum << " at token: " << word
-                 << endl;
-            cerr << "Decimal number out of range from -128 to 127" << endl;
+//            cerr << "Error on line " << lineNum << " at token: " << word
+//                 << endl;
+//            cerr << "Decimal number out of range from -128 to 127" << endl;
             return 0;
          }
          char charOutput = (char)tempLong;
@@ -1056,9 +1057,9 @@ int Binasc::processDecimalWord(ostream& out, const char* word,
          ulong tempLong = (ulong)atoi(&word[quoteIndex + 1]);
          uchar ucharOutput = (uchar)tempLong;
          if (tempLong > 255) { // || (tempLong < 0)) {
-            cerr << "Error on line " << lineNum << " at token: " << word
-                 << endl;
-            cerr << "Decimal number out of range from 0 to 255" << endl;
+//            cerr << "Error on line " << lineNum << " at token: " << word
+//                 << endl;
+//            cerr << "Decimal number out of range from 0 to 255" << endl;
             return 0;
          }
          out << ucharOutput;
@@ -1105,10 +1106,10 @@ int Binasc::processDecimalWord(ostream& out, const char* word,
       case 3:
          {
          if (signIndex != -1) {
-            cerr << "Error on line " << lineNum << " at token: " << word
-                 << endl;
-            cerr << "negative decimal numbers cannot be stored in 3 bytes"
-                 << endl;
+//            cerr << "Error on line " << lineNum << " at token: " << word
+//                 << endl;
+//            cerr << "negative decimal numbers cannot be stored in 3 bytes"
+//                 << endl;
             return 0;
          }
          ulong tempLong = (ulong)atoi(&word[quoteIndex + 1]);
@@ -1147,9 +1148,9 @@ int Binasc::processDecimalWord(ostream& out, const char* word,
          }
          break;
       default:
-         cerr << "Error on line " << lineNum << " at token: " << word
-              << endl;
-         cerr << "invalid byte count specification for decimal number" << endl;
+//         cerr << "Error on line " << lineNum << " at token: " << word
+//              << endl;
+//         cerr << "invalid byte count specification for decimal number" << endl;
          return 0;
    }
 
@@ -1169,14 +1170,14 @@ int Binasc::processHexWord(ostream& out, const char* word, int lineNum) {
    uchar outputByte;
 
    if (length > 2) {
-      cerr << "Error on line " << lineNum << " at token: " << word << endl;
-      cerr << "Size of hexadecimal number is too large.  Max is ff." << endl;
+//      cerr << "Error on line " << lineNum << " at token: " << word << endl;
+//      cerr << "Size of hexadecimal number is too large.  Max is ff." << endl;
       return 0;
    }
 
    if (!isxdigit(word[0]) || (length == 2 && !isxdigit(word[1]))) {
-      cerr << "Error on line " << lineNum << " at token: " << word << endl;
-      cerr << "Invalid character in hexadecimal number." << endl;
+//      cerr << "Error on line " << lineNum << " at token: " << word << endl;
+//      cerr << "Invalid character in hexadecimal number." << endl;
       return 0;
    }
 
@@ -1198,15 +1199,15 @@ int Binasc::processAsciiWord(ostream& out, const char* word, int lineNum) {
    uchar outputByte;
 
    if (word[0] != '+') {
-      cerr << "Error on line " << lineNum << " at token: " << word << endl;
-      cerr << "character byte must start with \'+\' sign: " << endl;
+//      cerr << "Error on line " << lineNum << " at token: " << word << endl;
+//      cerr << "character byte must start with \'+\' sign: " << endl;
       return 0;
    }
 
    if (length > 2) {
-      cerr << "Error on line " << lineNum << " at token: " << word << endl;
-      cerr << "character byte word is too long -- specify only one character"
-           << endl;
+//      cerr << "Error on line " << lineNum << " at token: " << word << endl;
+//      cerr << "character byte word is too long -- specify only one character"
+//           << endl;
       return 0;
    }
 
@@ -1239,32 +1240,32 @@ int Binasc::processBinaryWord(ostream& out, const char* word,
    for (i=0; i<length; i++) {
       if (word [i] == ',') {
          if (commaIndex != -1) {
-            cerr << "Error on line " << lineNum << " at token: " << word
-                 << endl;
-            cerr << "extra comma in binary number" << endl;
+//            cerr << "Error on line " << lineNum << " at token: " << word
+//                 << endl;
+//            cerr << "extra comma in binary number" << endl;
             return 0;
          } else {
             commaIndex = i;
          }
       } else if (!(word[i] == '1' || word[i] == '0')) {
-         cerr << "Error on line " << lineNum << " at token: " << word
-              << endl;
-         cerr << "Invalid character in binary number"
-                 " (character is " << word[i] <<")" << endl;
+//         cerr << "Error on line " << lineNum << " at token: " << word
+//              << endl;
+//         cerr << "Invalid character in binary number"
+//                 " (character is " << word[i] <<")" << endl;
          return 0;
       }
    }
 
    // comma cannot start or end number
    if (commaIndex == 0) {
-      cerr << "Error on line " << lineNum << " at token: " << word
-           << endl;
-      cerr << "cannot start binary number with a comma" << endl;
+//      cerr << "Error on line " << lineNum << " at token: " << word
+//           << endl;
+//      cerr << "cannot start binary number with a comma" << endl;
       return 0;
    } else if (commaIndex == length - 1 ) {
-      cerr << "Error on line " << lineNum << " at token: " << word
-           << endl;
-      cerr << "cannot end binary number with a comma" << endl;
+//      cerr << "Error on line " << lineNum << " at token: " << word
+//           << endl;
+//      cerr << "cannot end binary number with a comma" << endl;
       return 0;
    }
 
@@ -1274,22 +1275,22 @@ int Binasc::processBinaryWord(ostream& out, const char* word,
       leftDigits = commaIndex;
       rightDigits = length - commaIndex - 1;
    } else if (length > 8) {
-      cerr << "Error on line " << lineNum << " at token: " << word
-           << endl;
-      cerr << "too many digits in binary number" << endl;
+//      cerr << "Error on line " << lineNum << " at token: " << word
+//           << endl;
+//      cerr << "too many digits in binary number" << endl;
       return 0;
    }
    // if there is a comma, then there cannot be more than 4 digits on a side
    if (leftDigits > 4) {
-      cerr << "Error on line " << lineNum << " at token: " << word
-           << endl;
-      cerr << "too many digits to left of comma" << endl;
+//      cerr << "Error on line " << lineNum << " at token: " << word
+//           << endl;
+//      cerr << "too many digits to left of comma" << endl;
       return 0;
    }
    if (rightDigits > 4) {
-      cerr << "Error on line " << lineNum << " at token: " << word
-           << endl;
-      cerr << "too many digits to right of comma" << endl;
+//      cerr << "Error on line " << lineNum << " at token: " << word
+//           << endl;
+//      cerr << "too many digits to right of comma" << endl;
       return 0;
    }
 
@@ -1337,15 +1338,15 @@ int Binasc::processBinaryWord(ostream& out, const char* word,
 
 int Binasc::processVlvWord(ostream& out, const char* word, int lineNum) {
    if (strlen(word) < 2) {
-      cerr << "Error on line: " << lineNum
-           << ": 'v' needs to be followed immediately by a decimal digit"
-           << endl;
+//      cerr << "Error on line: " << lineNum
+//           << ": 'v' needs to be followed immediately by a decimal digit"
+//           << endl;
       return 0;
    }
    if (!isdigit(word[1])) {
-      cerr << "Error on line: " << lineNum
-           << ": 'v' needs to be followed immediately by a decimal digit"
-           << endl;
+//      cerr << "Error on line: " << lineNum
+//           << ": 'v' needs to be followed immediately by a decimal digit"
+//           << endl;
       return 0;
    }
    ulong value = atoi(&word[1]);
@@ -1391,16 +1392,16 @@ int Binasc::processVlvWord(ostream& out, const char* word, int lineNum) {
 int Binasc::processMidiPitchBendWord(ostream& out, const char* word, 
       int lineNum) {
    if (strlen(word) < 2) {
-      cerr << "Error on line: " << lineNum
-           << ": 'p' needs to be followed immediately by "
-           << "a floating-point number" << endl;
+//      cerr << "Error on line: " << lineNum
+//           << ": 'p' needs to be followed immediately by "
+//           << "a floating-point number" << endl;
       return 0;
    }
    if (!(isdigit(word[1]) || word[1] == '.' || word[1] == '-'
          || word[1] == '+')) {
-      cerr << "Error on line: " << lineNum
-           << ": 'p' needs to be followed immediately by "
-           << "a floating-point number" << endl;
+//      cerr << "Error on line: " << lineNum
+//           << ": 'p' needs to be followed immediately by "
+//           << "a floating-point number" << endl;
       return 0;
    }
    double value = strtod(&word[1], NULL);

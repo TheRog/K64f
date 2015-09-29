@@ -31,10 +31,11 @@
 #include "Binasc.h"
 
 #include <string.h>
-#include <iostream>
+//#include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <sstream>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -197,7 +198,7 @@ int MidiFile::read(istream& input) {
       binasc.writeToBinary(binarydata, input);
       binarydata.seekg(0, ios_base::beg);
       if (binarydata.peek() != 'M') {
-         cerr << "Bad MIDI data input" << endl;
+//         cerr << "Bad MIDI data input" << endl;
 	 rwstatus = 0;
          return rwstatus;
       } else {
@@ -219,58 +220,58 @@ int MidiFile::read(istream& input) {
 
    character = input.get();
    if (character == EOF) {
-      cerr << "In file " << filename << ": unexpected end of file." << endl;
-      cerr << "Expecting 'M' at first byte, but found nothing." << endl;
+//      cerr << "In file " << filename << ": unexpected end of file." << endl;
+//      cerr << "Expecting 'M' at first byte, but found nothing." << endl;
       rwstatus = 0; return rwstatus;
    } else if (character != 'M') {
-      cerr << "File " << filename << " is not a MIDI file" << endl;
-      cerr << "Expecting 'M' at first byte but got '"
-           << character << "'" << endl;
+//      cerr << "File " << filename << " is not a MIDI file" << endl;
+//      cerr << "Expecting 'M' at first byte but got '"
+//           << character << "'" << endl;
       rwstatus = 0; return rwstatus;
    }
 
    character = input.get();
    if (character == EOF) {
-      cerr << "In file " << filename << ": unexpected end of file." << endl;
-      cerr << "Expecting 'T' at first byte, but found nothing." << endl;
+//      cerr << "In file " << filename << ": unexpected end of file." << endl;
+//      cerr << "Expecting 'T' at first byte, but found nothing." << endl;
       rwstatus = 0; return rwstatus;
    } else if (character != 'T') {
-      cerr << "File " << filename << " is not a MIDI file" << endl;
-      cerr << "Expecting 'T' at first byte but got '"
-           << character << "'" << endl;
+//      cerr << "File " << filename << " is not a MIDI file" << endl;
+//      cerr << "Expecting 'T' at first byte but got '"
+//           << character << "'" << endl;
       rwstatus = 0; return rwstatus;
    }
 
    character = input.get();
    if (character == EOF) {
-      cerr << "In file " << filename << ": unexpected end of file." << endl;
-      cerr << "Expecting 'h' at first byte, but found nothing." << endl;
+//      cerr << "In file " << filename << ": unexpected end of file." << endl;
+//      cerr << "Expecting 'h' at first byte, but found nothing." << endl;
       rwstatus = 0; return rwstatus;
    } else if (character != 'h') {
-      cerr << "File " << filename << " is not a MIDI file" << endl;
-      cerr << "Expecting 'h' at first byte but got '"
-           << character << "'" << endl;
+//      cerr << "File " << filename << " is not a MIDI file" << endl;
+//      cerr << "Expecting 'h' at first byte but got '"
+//           << character << "'" << endl;
       rwstatus = 0; return rwstatus;
    }
 
    character = input.get();
    if (character == EOF) {
-      cerr << "In file " << filename << ": unexpected end of file." << endl;
-      cerr << "Expecting 'd' at first byte, but found nothing." << endl;
+//      cerr << "In file " << filename << ": unexpected end of file." << endl;
+//      cerr << "Expecting 'd' at first byte, but found nothing." << endl;
       rwstatus = 0; return rwstatus;
    } else if (character != 'd') {
-      cerr << "File " << filename << " is not a MIDI file" << endl;
-      cerr << "Expecting 'd' at first byte but got '"
-           << character << "'" << endl;
+//      cerr << "File " << filename << " is not a MIDI file" << endl;
+//      cerr << "Expecting 'd' at first byte but got '"
+//           << character << "'" << endl;
       rwstatus = 0; return rwstatus;
    }
 
    // read header size (allow larger header size?)
    longdata = MidiFile::readLittleEndian4Bytes(input);
    if (longdata != 6) {
-      cerr << "File " << filename
-           << " is not a MIDI 1.0 Standard MIDI file." << endl;
-      cerr << "The header size is " << longdata << " bytes." << endl;
+//      cerr << "File " << filename
+//           << " is not a MIDI 1.0 Standard MIDI file." << endl;
+//      cerr << "The header size is " << longdata << " bytes." << endl;
       rwstatus = 0; return rwstatus;
    }
 
@@ -286,8 +287,8 @@ int MidiFile::read(istream& input) {
          break;
       case 2:    // Type-2 MIDI files should probably be allowed as well.
       default:
-         cerr << "Error: cannot handle a type-" << shortdata
-              << " MIDI file" << endl;
+//         cerr << "Error: cannot handle a type-" << shortdata
+//              << " MIDI file" << endl;
          rwstatus = 0; return rwstatus;
    }
 
@@ -295,8 +296,8 @@ int MidiFile::read(istream& input) {
    int tracks;
    shortdata = MidiFile::readLittleEndian2Bytes(input);
    if (type == 0 && shortdata != 1) {
-      cerr << "Error: Type 0 MIDI file can only contain one track" << endl;
-      cerr << "Instead track count is: " << shortdata << endl;
+//      cerr << "Error: Type 0 MIDI file can only contain one track" << endl;
+//      cerr << "Instead track count is: " << shortdata << endl;
       rwstatus = 0; return rwstatus;
    } else {
       tracks = shortdata;
@@ -322,17 +323,17 @@ int MidiFile::read(istream& input) {
          case 231:  framespersecond = 25; break;
          case 227:  framespersecond = 29; break;
          case 226:  framespersecond = 30; break;
-         default:
-               cerr << "Warning: unknown FPS: " << framespersecond << endl;
-               framespersecond = 255 - framespersecond + 1;
-               cerr << "Setting FPS to " << framespersecond << endl;
+         default: break;
+//               cerr << "Warning: unknown FPS: " << framespersecond << endl;
+//               framespersecond = 255 - framespersecond + 1;
+//               cerr << "Setting FPS to " << framespersecond << endl;
       }
       // actually ticks per second (except for frame=29 (drop frame)):
       ticksPerQuarterNote = shortdata;
 
-      cerr << "SMPTE ticks: " << ticksPerQuarterNote << " ticks/sec" << endl;
-      cerr << "SMPTE frames per second: " << framespersecond << endl;
-      cerr << "SMPTE frame resolution per frame: " << resolution << endl;
+//      cerr << "SMPTE ticks: " << ticksPerQuarterNote << " ticks/sec" << endl;
+//      cerr << "SMPTE frames per second: " << framespersecond << endl;
+//      cerr << "SMPTE frame resolution per frame: " << resolution << endl;
    }  else {
       ticksPerQuarterNote = shortdata;
    }
@@ -359,53 +360,53 @@ int MidiFile::read(istream& input) {
 
       character = input.get();
       if (character == EOF) {
-         cerr << "In file " << filename << ": unexpected end of file." << endl;
-         cerr << "Expecting 'M' at first byte in track, but found nothing."
-              << endl;
+//         cerr << "In file " << filename << ": unexpected end of file." << endl;
+//         cerr << "Expecting 'M' at first byte in track, but found nothing."
+//              << endl;
          rwstatus = 0; return rwstatus;
       } else if (character != 'M') {
-         cerr << "File " << filename << " is not a MIDI file" << endl;
-         cerr << "Expecting 'M' at first byte in track but got '"
-              << character << "'" << endl;
+//         cerr << "File " << filename << " is not a MIDI file" << endl;
+//         cerr << "Expecting 'M' at first byte in track but got '"
+//              << character << "'" << endl;
          rwstatus = 0; return rwstatus;
       }
 
       character = input.get();
       if (character == EOF) {
-         cerr << "In file " << filename << ": unexpected end of file." << endl;
-         cerr << "Expecting 'T' at first byte in track, but found nothing."
-              << endl;
+//         cerr << "In file " << filename << ": unexpected end of file." << endl;
+//         cerr << "Expecting 'T' at first byte in track, but found nothing."
+//              << endl;
          rwstatus = 0; return rwstatus;
       } else if (character != 'T') {
-         cerr << "File " << filename << " is not a MIDI file" << endl;
-         cerr << "Expecting 'T' at first byte in track but got '"
-              << character << "'" << endl;
+//         cerr << "File " << filename << " is not a MIDI file" << endl;
+//         cerr << "Expecting 'T' at first byte in track but got '"
+//              << character << "'" << endl;
          rwstatus = 0; return rwstatus;
       }
 
       character = input.get();
       if (character == EOF) {
-         cerr << "In file " << filename << ": unexpected end of file." << endl;
-         cerr << "Expecting 'r' at first byte in track, but found nothing."
-              << endl;
+//         cerr << "In file " << filename << ": unexpected end of file." << endl;
+//         cerr << "Expecting 'r' at first byte in track, but found nothing."
+//              << endl;
          rwstatus = 0; return rwstatus;
       } else if (character != 'r') {
-         cerr << "File " << filename << " is not a MIDI file" << endl;
-         cerr << "Expecting 'r' at first byte in track but got '"
-              << character << "'" << endl;
+//         cerr << "File " << filename << " is not a MIDI file" << endl;
+//         cerr << "Expecting 'r' at first byte in track but got '"
+//              << character << "'" << endl;
          rwstatus = 0; return rwstatus;
       }
 
       character = input.get();
       if (character == EOF) {
-         cerr << "In file " << filename << ": unexpected end of file." << endl;
-         cerr << "Expecting 'k' at first byte in track, but found nothing."
-              << endl;
+//         cerr << "In file " << filename << ": unexpected end of file." << endl;
+//         cerr << "Expecting 'k' at first byte in track, but found nothing."
+//              << endl;
          rwstatus = 0; return rwstatus;
       } else if (character != 'k') {
-         cerr << "File " << filename << " is not a MIDI file" << endl;
-         cerr << "Expecting 'k' at first byte in track but got '"
-              << character << "'" << endl;
+//         cerr << "File " << filename << " is not a MIDI file" << endl;
+//         cerr << "Expecting 'k' at first byte in track but got '"
+//              << character << "'" << endl;
          rwstatus = 0; return rwstatus;
       }
 
@@ -483,7 +484,7 @@ int MidiFile::write(const char* filename) {
    fstream output(filename, ios::out);
 
    if (!output.is_open()) {
-      cerr << "Error: could not write: " << filename << endl;
+//      cerr << "Error: could not write: " << filename << endl;
       return 0;
    }
    rwstatus = write(output);
@@ -616,7 +617,7 @@ int MidiFile::write(ostream& out) {
 int MidiFile::writeHex(const char* aFile, int width) {
    fstream output(aFile, ios::out);
    if (!output.is_open()) {
-      cerr << "Error: could not write: " << aFile << endl;
+//      cerr << "Error: could not write: " << aFile << endl;
       return 0;
    }
    rwstatus = writeHex(output, width);
@@ -678,7 +679,7 @@ int MidiFile::writeBinasc(const char* aFile) {
    fstream output(aFile, ios::out);
 
    if (!output.is_open()) {
-      cerr << "Error: could not write: " << aFile << endl;
+//      cerr << "Error: could not write: " << aFile << endl;
       return 0;
    }
    rwstatus = writeBinasc(output);
@@ -1213,8 +1214,8 @@ int MidiFile::makeVLV(uchar *buffer, int number) {
    unsigned long value = (unsigned long)number;
 
    if (value >= (1 << 28)) {
-      cout << "Error: number too large to handle" << endl;
-      exit(1);
+//      cout << "Error: number too large to handle" << endl;
+      while(1);//exit(1);
    }
 
    buffer[0] = (value >> 21) & 0x7f;
@@ -1614,8 +1615,8 @@ double MidiFile::getTimeInSeconds(int tickvalue) {
       // the time in seconds values to figure out the final
       // time in seconds.
       // Since the code is not yet written, kill the program at this point:
-      cerr << "ERROR: tick value " << tickvalue << " was not found " << endl;
-      exit(1);
+//      cerr << "ERROR: tick value " << tickvalue << " was not found " << endl;
+      while(1);//exit(1);
    } else {
       return ((_TickTime*)ptr)->seconds;
    }
@@ -1882,7 +1883,7 @@ int MidiFile::extractMidiData(istream& input, vector<uchar>& array,
 
    character = input.get();
    if (character == EOF) {
-      cerr << "Error: unexpected end of file." << endl;
+//      cerr << "Error: unexpected end of file." << endl;
       return 0;
    } else {
       byte = (uchar)character;
@@ -1891,12 +1892,12 @@ int MidiFile::extractMidiData(istream& input, vector<uchar>& array,
    if (byte < 0x80) {
       runningQ = 1;
       if (runningCommand == 0) {
-         cerr << "Error: running command with no previous command" << endl;
+//         cerr << "Error: running command with no previous command" << endl;
          return 0;
       }
       if (runningCommand >= 0xf0) {
-         cerr << "Error: running status not permitted with meta and sysex"
-              << " event." << endl;
+//         cerr << "Error: running status not permitted with meta and sysex"
+//              << " event." << endl;
          return 0;
       }
    } else {
@@ -1973,8 +1974,8 @@ int MidiFile::extractMidiData(istream& input, vector<uchar>& array,
          }
          break;
       default:
-         cout << "Error reading midifile" << endl;
-         cout << "Command byte was " << (int)runningCommand << endl;
+//         cout << "Error reading midifile" << endl;
+//         cout << "Command byte was " << (int)runningCommand << endl;
          return 0;
    }
    return 1;
@@ -2011,8 +2012,8 @@ ulong MidiFile::readVLValue(istream& input) {
 
 ulong MidiFile::unpackVLV(uchar a, uchar b, uchar c, uchar d, uchar e) {
    if (e > 0x7f) {
-      cerr << "Error: VLV value was too long" << endl;
-      exit(1);
+//      cerr << "Error: VLV value was too long" << endl;
+      while(1);//exit(1);
    }
 
    uchar bytes[5] = {a, b, c, d, e};
@@ -2271,8 +2272,8 @@ ulong MidiFile::readLittleEndian4Bytes(istream& input) {
    uchar buffer[4] = {0};
    input.read((char*)buffer, 4);
    if (input.eof()) {
-      cerr << "Error: unexpected end of file." << endl;
-      exit(1);
+//      cerr << "Error: unexpected end of file." << endl;
+      while(1);//exit(1);
    }
    return buffer[3] | (buffer[2] << 8) | (buffer[1] << 16) | (buffer[0] << 24);
 }
@@ -2290,8 +2291,8 @@ ushort MidiFile::readLittleEndian2Bytes(istream& input) {
    uchar buffer[2] = {0};
    input.read((char*)buffer, 2);
    if (input.eof()) {
-      cerr << "Error: unexpected end of file." << endl;
-      exit(1);
+//      cerr << "Error: unexpected end of file." << endl;
+      while(1);//exit(1);
    }
    return buffer[1] | (buffer[0] << 8);
 }
@@ -2308,8 +2309,8 @@ uchar MidiFile::readByte(istream& input) {
    uchar buffer[1] = {0};
    input.read((char*)buffer, 1);
    if (input.eof()) {
-      cerr << "Error: unexpected end of file." << endl;
-      exit(1);
+//      cerr << "Error: unexpected end of file." << endl;
+      while(1);//exit(1);
    }
    return buffer[0];
 }

@@ -14,7 +14,11 @@
 #include "MidiEventList.h"
 
 #include <vector>
-#include <iostream>
+//#include <iostream>
+
+#ifndef NULL
+#define NULL 0
+#endif
 
 using namespace std;
 

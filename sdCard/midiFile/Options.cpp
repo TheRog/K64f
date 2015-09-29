@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <cctype>
-#include <iostream>
+//#include <iostream>
 #include <algorithm>
 
 using namespace std;
@@ -244,12 +244,12 @@ void Option_register::setType(char aType) {
 //
 
 ostream& Option_register::print(ostream& out) {
-   out << "definition:\t"     << definition     << endl;
-   out << "description:\t"    << description    << endl;
-   out << "defaultOption:\t"  << defaultOption  << endl;
-   out << "modifiedOption:\t" << modifiedOption << endl;
-   out << "modifiedQ:\t\t"    << modifiedQ      << endl;
-   out << "type:\t\t"         << type           << endl;
+//   out << "definition:\t"     << definition     << endl;
+//   out << "description:\t"    << description    << endl;
+//   out << "defaultOption:\t"  << defaultOption  << endl;
+//   out << "modifiedOption:\t" << modifiedOption << endl;
+//   out << "modifiedQ:\t\t"    << modifiedQ      << endl;
+//   out << "type:\t\t"         << type           << endl;
    return out;
 };
 
@@ -346,8 +346,8 @@ int Options::define(const string& aDefinition) {
    // Error if definition string doesn't contain an equals sign
    auto location = aDefinition.find("=");
    if (location == string::npos) {
-      cerr << "Error: no \"=\" in option definition: " << aDefinition << endl;
-      exit(1);
+//      cerr << "Error: no \"=\" in option definition: " << aDefinition << endl;
+//      exit(1);
    }
 
    string aliases = aDefinition.substr(0, location);
@@ -366,9 +366,9 @@ int Options::define(const string& aDefinition) {
    
    // Option types are only a single charater (b, i, d, c or s)
    if (otype.size() != 1) {
-      cerr << "Error: option type is invalid: " << otype 
-           << " in option definition: " << aDefinition << endl;
-      exit(1);
+//      cerr << "Error: option type is invalid: " << otype
+//           << " in option definition: " << aDefinition << endl;
+//      exit(1);
    }
 
    // Check to make sure that the type is known
@@ -378,9 +378,9 @@ int Options::define(const string& aDefinition) {
        otype[0] != OPTION_DOUBLE_TYPE  &&
        otype[0] != OPTION_BOOLEAN_TYPE &&
        otype[0] != OPTION_CHAR_TYPE ) {
-      cerr << "Error: unknown option type \'" << otype[0]
-           << "\' in defintion: " << aDefinition << endl;
-      exit(1);
+//      cerr << "Error: unknown option type \'" << otype[0]
+//           << "\' in defintion: " << aDefinition << endl;
+//      exit(1);
    }
 
    // Set up space for a option entry in the registry
@@ -397,11 +397,11 @@ int Options::define(const string& aDefinition) {
          continue;
       } else if (aliases[i] == '|') {
          if (isDefined(optionName)) {
-            cerr << "Option \"" << optionName << "\" from definition:" << endl;
-            cerr << "\t" << aDefinition << endl;
-            cerr << "is already defined in: " << endl;
-            cerr << "\t" << getDefinition(optionName) << endl;
-            exit(1);
+//            cerr << "Option \"" << optionName << "\" from definition:" << endl;
+//            cerr << "\t" << aDefinition << endl;
+//            cerr << "is already defined in: " << endl;
+//            cerr << "\t" << getDefinition(optionName) << endl;
+//            exit(1);
          }
          if (optionName.size() > 0) {
             optionList[optionName] = definitionIndex;
@@ -451,8 +451,8 @@ int Options::isDefined(const string& name) {
 
 const string& Options::getArg(int index) {
    if (index < 0 || index >= (int)argument.size()) {
-      cerr << "Error: argument " << index << " does not exist." << endl;
-      exit(1);
+//      cerr << "Error: argument " << index << " does not exist." << endl;
+//      exit(1);
    }
    return argument[index];
 }
@@ -665,8 +665,8 @@ int Options::optionsArg(void) {
 
 ostream& Options::print(ostream& out) {
    for (unsigned int i=0; i<optionRegister.size(); i++) {
-      out << optionRegister[i]->getDefinition() << "\t"
-           << optionRegister[i]->getDescription() << endl;
+//      out << optionRegister[i]->getDefinition() << "\t"
+//           << optionRegister[i]->getDescription() << endl;
    }
    return out;
 }
@@ -1033,17 +1033,17 @@ int Options::getRegIndex(const string& optionName) {
    } 
 
    if (optionName == "options") {
-      print(cout);
-      exit(0);
+//      print(cout);
+//      exit(0);
    } 
 
 
    auto it = optionList.find(optionName);
    if (it == optionList.end()) {
       if (options_error_check) {
-         cerr << "Error: unknown option \"" << optionName << "\"." << endl;
-         print(cout);
-         exit(1);
+//         cerr << "Error: unknown option \"" << optionName << "\"." << endl;
+//         print(cout);
+//         exit(1);
       } else {
          return -1;
       }
@@ -1140,9 +1140,9 @@ int Options::storeOption(int gargp, int& position, int& running) {
          }
          if (oargv[gargp][position] == '=') {
             if (optionType == OPTION_BOOLEAN_TYPE) {
-               cerr << "Error: boolean variable cannot have any options: " 
-                    << tempname << endl;
-               exit(1);
+//               cerr << "Error: boolean variable cannot have any options: "
+//                    << tempname << endl;
+//               exit(1);
             }
             position++;
          }
@@ -1171,7 +1171,7 @@ int Options::storeOption(int gargp, int& position, int& running) {
    }
 
    if (gargp >= oargc) {
-      cerr << "Error: last option requires a parameter" << endl;
+//      cerr << "Error: last option requires a parameter" << endl;
       exit(1);
    }
    setModified(tempname, &oargv[gargp][position]);
@@ -1191,7 +1191,7 @@ int Options::storeOption(int gargp, int& position, int& running) {
 
 ostream& Options::printOptionList(ostream& out) {
    for (auto it = optionList.begin(); it != optionList.end(); it++) {
-      out << it->first << "\t" << it->second << endl;
+//      out << it->first << "\t" << it->second << endl;
    }
    return out;
 }
@@ -1205,8 +1205,8 @@ ostream& Options::printOptionList(ostream& out) {
 
 ostream& Options::printOptionListBooleanState(ostream& out) {
    for (auto it = optionList.begin(); it != optionList.end(); it++) {
-      out << it->first << "\t" 
-          << optionRegister[it->second]->isModified() << endl;
+//      out << it->first << "\t"
+//          << optionRegister[it->second]->isModified() << endl;
    }
    return out;
 }

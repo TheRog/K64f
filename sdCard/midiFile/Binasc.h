@@ -12,7 +12,7 @@
 #ifndef _BINASC_H_INCLUDED
 #define _BINASC_H_INCLUDED
 
-#include <iostream>
+//#include <iostream>
 #include <fstream>
 
 using namespace std;
