@@ -28,13 +28,13 @@
 //
 
 #include "MidiFile.h"
-//#include "Binasc.h"
+#include "Binasc.h"
 
 #include <string.h>
 #include <iostream>
-//#include <iomanip>
-//#include <fstream>
-//#include <sstream>
+#include <iomanip>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -187,24 +187,24 @@ int MidiFile::read(const string& filename) {
 
 int MidiFile::read(istream& input) {
    rwstatus = 1;
-//   if (input.peek() != 'M') {
-//      // If the first byte in the input stream is not 'M', then presume that
-//      // the MIDI file is in the binasc format which is an ASCII representation
-//      // of the MIDI file.  Convert the binasc content into binary content and
-//      // then continue reading with this function.
-//      stringstream binarydata;
-//      Binasc binasc;
-//      binasc.writeToBinary(binarydata, input);
-//      binarydata.seekg(0, ios_base::beg);
-//      if (binarydata.peek() != 'M') {
-//         cerr << "Bad MIDI data input" << endl;
-//	 rwstatus = 0;
-//         return rwstatus;
-//      } else {
-//         rwstatus = read(binarydata);
-//         return rwstatus;
-//      }
-//   }
+   if (input.peek() != 'M') {
+      // If the first byte in the input stream is not 'M', then presume that
+      // the MIDI file is in the binasc format which is an ASCII representation
+      // of the MIDI file.  Convert the binasc content into binary content and
+      // then continue reading with this function.
+      stringstream binarydata;
+      Binasc binasc;
+      binasc.writeToBinary(binarydata, input);
+      binarydata.seekg(0, ios_base::beg);
+      if (binarydata.peek() != 'M') {
+         cerr << "Bad MIDI data input" << endl;
+	 rwstatus = 0;
+         return rwstatus;
+      } else {
+         rwstatus = read(binarydata);
+         return rwstatus;
+      }
+   }
 
    const char* filename = getFilename();
 
@@ -639,30 +639,30 @@ int MidiFile::writeHex(const string& aFile, int width) {
 //
 
 int MidiFile::writeHex(ostream& out, int width) {
-//   stringstream tempstream;
-//   MidiFile::write(tempstream);
-//   int value = 0;
-//   int len = tempstream.str().length();
-//   int wordcount = 1;
-//   int linewidth = width >= 0 ? width : 25;
-//   for (int i=0; i<len; i++) {
-//      value = (unsigned char)tempstream.str()[i];
-//      printf("%02x", value);
-//      if (linewidth) {
-//         if (i < len - 1) {
-//            out << (wordcount % linewidth ? ' ' : '\n');
-//         }
-//         wordcount++;
-//      } else {
-//         // print with no line breaks
-//         if (i < len - 1) {
-//            out << ' ';
-//         }
-//      }
-//   }
-//   if (linewidth) {
-//      out << '\n';
-//   }
+   stringstream tempstream;
+   MidiFile::write(tempstream);
+   int value = 0;
+   int len = tempstream.str().length();
+   int wordcount = 1;
+   int linewidth = width >= 0 ? width : 25;
+   for (int i=0; i<len; i++) {
+      value = (unsigned char)tempstream.str()[i];
+      printf("%02x", value);
+      if (linewidth) {
+         if (i < len - 1) {
+            out << (wordcount % linewidth ? ' ' : '\n');
+         }
+         wordcount++;
+      } else {
+         // print with no line breaks
+         if (i < len - 1) {
+            out << ' ';
+         }
+      }
+   }
+   if (linewidth) {
+      out << '\n';
+   }
    return 1;
 }
 
@@ -693,16 +693,16 @@ int MidiFile::writeBinasc(const string& aFile) {
 
 
 int MidiFile::writeBinasc(ostream& output) {
-//   stringstream binarydata;
-//   rwstatus = write(binarydata);
-//   if (rwstatus == 0) {
-//      return 0;
-//   }
+   stringstream binarydata;
+   rwstatus = write(binarydata);
+   if (rwstatus == 0) {
+      return 0;
+   }
 
-//   Binasc binasc;
-//   binasc.setMidiOn();
-//   binarydata.seekg(0, ios_base::beg);
-//   binasc.readFromBinary(output, binarydata);
+   Binasc binasc;
+   binasc.setMidiOn();
+   binarydata.seekg(0, ios_base::beg);
+   binasc.readFromBinary(output, binarydata);
    return 1;
 }
 
@@ -1214,7 +1214,7 @@ int MidiFile::makeVLV(uchar *buffer, int number) {
 
    if (value >= (1 << 28)) {
       cout << "Error: number too large to handle" << endl;
-      while(1);//exit(1);
+      exit(1);
    }
 
    buffer[0] = (value >> 21) & 0x7f;
@@ -1537,8 +1537,8 @@ void MidiFile::setMillisecondTicks(void) {
 //
 
 void MidiFile::sortTrack(MidiEventList& trackData) {
-//   qsort(trackData.data(), trackData.size(),
-//      sizeof(MidiEvent*), eventcompare);
+   qsort(trackData.data(), trackData.size(),
+      sizeof(MidiEvent*), eventcompare);
 }
 
 
@@ -1604,10 +1604,9 @@ double MidiFile::getTimeInSeconds(int tickvalue) {
    key.tick    = tickvalue;
    key.seconds = -1;
 
-//   void* ptr = bsearch(&key, timemap.data(), timemap.size(),
-//         sizeof(_TickTime), ticksearch);
+   void* ptr = bsearch(&key, timemap.data(), timemap.size(),
+         sizeof(_TickTime), ticksearch);
 
-   void* ptr = NULL;
    if (ptr == NULL) {
       // The specific tick value was not found, so do a linear
       // search for the two tick values which occur before and
@@ -1616,7 +1615,7 @@ double MidiFile::getTimeInSeconds(int tickvalue) {
       // time in seconds.
       // Since the code is not yet written, kill the program at this point:
       cerr << "ERROR: tick value " << tickvalue << " was not found " << endl;
-      while(1);//exit(1);
+      exit(1);
    } else {
       return ((_TickTime*)ptr)->seconds;
    }
@@ -1645,10 +1644,9 @@ int MidiFile::getAbsoluteTickTime(double starttime) {
    key.tick    = -1;
    key.seconds = starttime;
 
-//   void* ptr = bsearch(&key, timemap.data(), timemap.size(),
-//         sizeof(_TickTime), secondsearch);
+   void* ptr = bsearch(&key, timemap.data(), timemap.size(),
+         sizeof(_TickTime), secondsearch);
 
-   void* ptr = NULL;
    if (ptr == NULL) {
       // The specific seconds value was not found, so do a linear
       // search for the two time values which occur before and
@@ -2014,7 +2012,7 @@ ulong MidiFile::readVLValue(istream& input) {
 ulong MidiFile::unpackVLV(uchar a, uchar b, uchar c, uchar d, uchar e) {
    if (e > 0x7f) {
       cerr << "Error: VLV value was too long" << endl;
-      while(1);//exit(1);
+      exit(1);
    }
 
    uchar bytes[5] = {a, b, c, d, e};
@@ -2274,7 +2272,7 @@ ulong MidiFile::readLittleEndian4Bytes(istream& input) {
    input.read((char*)buffer, 4);
    if (input.eof()) {
       cerr << "Error: unexpected end of file." << endl;
-      while(1);//exit(1);
+      exit(1);
    }
    return buffer[3] | (buffer[2] << 8) | (buffer[1] << 16) | (buffer[0] << 24);
 }
@@ -2293,7 +2291,7 @@ ushort MidiFile::readLittleEndian2Bytes(istream& input) {
    input.read((char*)buffer, 2);
    if (input.eof()) {
       cerr << "Error: unexpected end of file." << endl;
-      while(1);//exit(1);
+      exit(1);
    }
    return buffer[1] | (buffer[0] << 8);
 }
@@ -2311,7 +2309,7 @@ uchar MidiFile::readByte(istream& input) {
    input.read((char*)buffer, 1);
    if (input.eof()) {
       cerr << "Error: unexpected end of file." << endl;
-      while(1);//exit(1);
+      exit(1);
    }
    return buffer[0];
 }
