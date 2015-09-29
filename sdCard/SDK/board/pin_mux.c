@@ -322,7 +322,8 @@ void configure_ftm_pins(uint32_t instance)
   switch(instance) {    
     case FTM0_IDX:                       /* FTM0 */
       /* Affects PORTC_PCR1 register */
-      PORT_HAL_SetMuxMode(PORTC,1u,kPortMuxAlt4);
+      //PORT_HAL_SetMuxMode(PORTC,1u,kPortMuxAlt4);
+      PORT_HAL_SetMuxMode(PORTC,3u,kPortMuxAlt4);
       break;
     default:
       break;

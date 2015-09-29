@@ -39,14 +39,11 @@
 #include <string.h>
 
 #include "fsl_debug_console.h"
-
-#if (defined(TWR_K64F120M) || defined(FRDM_K64F) || defined(TWR_K60D100M) || \
-	defined(TWR_K21F120M) || defined(TWR_K65F180M))
+#include "fsl_ftm_driver.h"
 #include "fsl_mpu_hal.h"
-#endif
 
 bool sdhc_detect(void);
-void log_accel_values(int16_t x, int16_t y, int16_t z);
+void log_accel_values(uint32_t counter, int16_t x, int16_t y, int16_t z);
 void int16tostr (int16_t num, char* str_buff);
 
 FATFS FatFs;	/* FatFs system object */
@@ -115,6 +112,8 @@ static void SdCardTask(void *arg)
 	debug_printf("\nLogging accelerometer values... \r\n");
 	debug_printf("\nNOTE: To safely remove SD Card, press and hold SW3\r\n");
 
+	int counter = 0;
+
 	for (;;)
 	{
 		// Get new accelerometer data.
@@ -125,7 +124,7 @@ static void SdCardTask(void *arg)
 		yData = (int16_t)((sensorData.accelYMSB << 8) | sensorData.accelYLSB);
 		zData = (int16_t)((sensorData.accelZMSB << 8) | sensorData.accelZLSB);
 
-		debug_printf("\nx = %d  y = %d  z = %d\r\n", xData, yData, zData);
+		debug_printf("\n%d | x = %d  y = %d  z = %d\r\n", counter, xData, yData, zData);
 
 		/* Check SW3 pin state */
 		if(GPIO_DRV_ReadPinInput(switchPins[1].pinName) == 0)
@@ -137,11 +136,13 @@ static void SdCardTask(void *arg)
 		/* If SD card not present avoid logging */
 		if(sdhc_detect())
 		{
-			log_accel_values(xData, yData, zData);
+			log_accel_values(counter, xData, yData, zData);
 		}
 
 		/* Wait 1 second to read and log new data */
-		OSA_TimeDelay(200);
+		OSA_TimeDelay(1000);
+		//OSA_TimeDelay(5);
+		counter++;
 	}
 }
 
@@ -166,6 +167,24 @@ static void MainTask(void *arg)
 {
    OSA_TimeDelay(100);
 
+   ftm_user_config_t ftmInfo;
+
+   // Configure ftm params with frequency 24kHZ
+   ftm_pwm_param_t ftmParam;
+   ftmParam.mode                   = kFtmEdgeAlignedPWM;
+   ftmParam.edgeMode               = kFtmLowTrue;
+   ftmParam.uFrequencyHZ           = 24000u;
+   ftmParam.uDutyCyclePercent      = 50;
+   ftmParam.uFirstEdgeDelayPercent = 0;
+
+   // Initialize FTM module,
+   // configure for software trigger.
+   memset(&ftmInfo, 0, sizeof(ftmInfo));
+   ftmInfo.syncMethod = kFtmUseSoftwareTrig;
+   FTM_DRV_Init(BOARD_FTM_INSTANCE, &ftmInfo);
+   FTM_DRV_SetClock(BOARD_FTM_INSTANCE, kClock_source_FTM_SystemClk, kFtmDividedBy1);
+
+
    debug_printf("\n****** uServer ******\r\n");
 
    LED1_EN; LED2_EN; LED3_EN;
@@ -174,6 +193,12 @@ static void MainTask(void *arg)
    while(1)
    {
       counter++;
+
+      ftmParam.uDutyCyclePercent = (counter*10) % 100;
+      // Start PWM mode with updated duty cycle.
+      FTM_DRV_PwmStart(BOARD_FTM_INSTANCE, &ftmParam, 2);
+      // Software trigger to update registers
+      FTM_HAL_SetSoftwareTriggerCmd(g_ftmBase[BOARD_FTM_INSTANCE], true);
 
       LED1_TOGGLE; OSA_TimeDelay(50);
       LED3_TOGGLE; OSA_TimeDelay(50);
@@ -196,7 +221,7 @@ int main (void)
 
    OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 1024, NULL, 1, NULL, true, NULL);
    OSA_TaskCreate((task_t)MainTask,   (uint8_t*)"Main Task",    1024, NULL, 2, NULL, true, NULL);
-   OSA_TaskCreate((task_t)FnetTask,   (uint8_t*)"FNET Task",    2048, NULL, 3, NULL, true, NULL);
+   //OSA_TaskCreate((task_t)FnetTask,   (uint8_t*)"FNET Task",    2048, NULL, 3, NULL, true, NULL);
 
    OSA_Start();
 
@@ -216,7 +241,7 @@ int main (void)
 *
 *END*--------------------------------------------------------------------*/
 
-void log_accel_values(int16_t x, int16_t y, int16_t z)
+void log_accel_values(uint32_t counter, int16_t x, int16_t y, int16_t z)
 {
 	FRESULT		fr;			/* FatFs functions return code */
 	FIL			fil;			/* File object */
@@ -239,6 +264,11 @@ void log_accel_values(int16_t x, int16_t y, int16_t z)
 	fr = f_lseek(&fil, new_line);
 
 	aux_string[0] = '\0';
+
+   /* Append counter */
+   int16tostr(counter, str_number);
+   strcat(aux_string, str_number);
+   strcat(aux_string, "\t");
 
 	/* Append x value */
 	int16tostr(x, str_number);
