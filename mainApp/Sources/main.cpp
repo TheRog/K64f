@@ -51,17 +51,6 @@ void int16tostr (int16_t num, char* str_buff);
 
 FATFS FatFs;	/* FatFs system object */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-void vApplicationMallocFailedHook( void )
-{
-	while(1);
-}
-#ifdef __cplusplus
-}
-#endif
-
 static void SdCardTask(void *arg)
 {
 	FRESULT fr;		/* FatFs return code */
@@ -83,19 +72,19 @@ static void SdCardTask(void *arg)
 	/* Initialize safe removal pin (SW3 = PTA4) */
 	GPIO_DRV_InputPinInit(&switchPins[1]);
 
-	debug_printf("\n****** KSDK: FatFs + SD CARD demo ******\r\n");
+	PRINTF("\n****** KSDK: FatFs + SD CARD demo ******\r\n");
 
 	if(!sdhc_detect())
 	{
-	   debug_printf("\nPlease insert SD Card\r\n");
+	   PRINTF("\nPlease insert SD Card\r\n");
 
 		/* Wait for SD Card insertion */
 		while (!sdhc_detect());
 	}
 
-	debug_printf("\nSD Card inserted\r\n");
+	PRINTF("\nSD Card inserted\r\n");
 
-	debug_printf("\nInitializing SD Card...\r\n");
+	PRINTF("\nInitializing SD Card...\r\n");
 
 #if (defined(TWR_K64F120M) || defined(FRDM_K64F) || defined(TWR_K60D100M) || \
 	defined(TWR_K21F120M) || defined(TWR_K65F180M))
@@ -107,24 +96,24 @@ static void SdCardTask(void *arg)
 	ds = (DRESULT)disk_initialize(SD);
 	if(ds)
 	{
-	   debug_printf("\nFailed to initialize SD disk\r\n");
+	   PRINTF("\nFailed to initialize SD disk\r\n");
 		for(;;){}
 	}
 
 	/* Select current logical device driver (0 = USB, 1 = SD) */
 	fr = f_chdrive(SD);
-	debug_printf("\nMounting file system to SD Card volume...\r\n");
+	PRINTF("\nMounting file system to SD Card volume...\r\n");
 
 	/* Mount file system to the SDCARD volume */
 	fr = f_mount(SD, &FatFs);
 	if(fr)
 	{
-	   debug_printf("\nError mounting file system\r\n");
+	   PRINTF("\nError mounting file system\r\n");
 		for(;;){}
 	}
 
-	debug_printf("\nLogging accelerometer values... \r\n");
-	debug_printf("\nNOTE: To safely remove SD Card, press and hold SW3\r\n");
+	PRINTF("\nLogging accelerometer values... \r\n");
+	PRINTF("\nNOTE: To safely remove SD Card, press and hold SW3\r\n");
 
 	for (;;)
 	{
@@ -136,12 +125,12 @@ static void SdCardTask(void *arg)
 		yData = (int16_t)((sensorData.accelYMSB << 8) | sensorData.accelYLSB);
 		zData = (int16_t)((sensorData.accelZMSB << 8) | sensorData.accelZLSB);
 
-		debug_printf("\nx = %d  y = %d  z = %d\r\n", xData, yData, zData);
+		PRINTF("\nx = %d  y = %d  z = %d\r\n", xData, yData, zData);
 
 		/* Check SW3 pin state */
 		if(GPIO_DRV_ReadPinInput(switchPins[1].pinName) == 0)
 		{
-		   debug_printf("\nHold SW3 pressed and remove SD Card\r\n");
+		   PRINTF("\nHold SW3 pressed and remove SD Card\r\n");
 			while(GPIO_DRV_ReadPinInput(switchPins[1].pinName) == 0);
 		}
 
@@ -178,7 +167,7 @@ static void MainTask(void *arg)
 {
    OSA_TimeDelay(500);
 
-   debug_printf("\n****** uServer ******\r\n");
+   PRINTF("\n****** uServer ******\r\n");
 
    LED1_EN; LED2_EN; LED3_EN;
 
@@ -336,6 +325,9 @@ void int16tostr (int16_t num, char* str_buff)
 	str_buff[j] = '\0';
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// EOF
-////////////////////////////////////////////////////////////////////////////////
+extern "C" {
+void vApplicationMallocFailedHook( void )
+{
+	while(1);
+}
+}
