@@ -24,7 +24,6 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-<<<<<<< HEAD
 	<linkedResources>
 		<link>
 			<name>fnet_stack</name>
@@ -157,8 +156,6 @@
 			<locationURI>PROJECT_KSDK_PATH/rtos/FreeRTOS/include/timers.h</locationURI>
 		</link>
 	</linkedResources>
-=======
->>>>>>> parent of f9585ae... Starting from the SD Card Demo
 	<variableList>
 		<variable>
 			<name>PROJECT_KSDK_PATH</name>
