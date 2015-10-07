@@ -51,6 +51,17 @@ void int16tostr (int16_t num, char* str_buff);
 
 FATFS FatFs;	/* FatFs system object */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+void vApplicationMallocFailedHook( void )
+{
+	while(1);
+}
+#ifdef __cplusplus
+}
+#endif
+
 static void SdCardTask(void *arg)
 {
 	FRESULT fr;		/* FatFs return code */
@@ -197,7 +208,7 @@ int main (void)
 
    OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 1024, NULL, 1, NULL, true, NULL);
    OSA_TaskCreate((task_t)MainTask,   (uint8_t*)"Main Task",    1024, NULL, 2, NULL, true, NULL);
-   OSA_TaskCreate((task_t)FnetTask,   (uint8_t*)"FNET Task",    2048, NULL, 3, NULL, true, NULL);
+   //OSA_TaskCreate((task_t)FnetTask,   (uint8_t*)"FNET Task",    2048, NULL, 3, NULL, true, NULL);
 
    OSA_Start();
 

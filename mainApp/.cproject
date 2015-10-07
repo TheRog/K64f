@@ -84,8 +84,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\port\gcc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\config\K64F12\gcc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\FNET\FNET 2.9.0\fnet_stack&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Project_Settings/OsConfig}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.1999170936" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_DEBUG=1"/>
@@ -127,9 +127,9 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\port\gcc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Freescale\KSDK_1.2.0\rtos\FreeRTOS\config\K64F12\gcc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\FNET\FNET 2.9.0\fnet_stack&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/fnet_application}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Project_Settings/OsConfig}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs.612037757" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_DEBUG=1"/>
@@ -196,5 +196,9 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/K64_FatFs_KSDK"/>
+		</configuration>
+	</storageModule>
 </cproject>
