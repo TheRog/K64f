@@ -38,6 +38,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "SdCard.h"
+
 #include "fsl_debug_console.h"
 
 #if (defined(TWR_K64F120M) || defined(FRDM_K64F) || defined(TWR_K60D100M) || \
@@ -49,7 +51,12 @@ bool sdhc_detect(void);
 void log_accel_values(int16_t x, int16_t y, int16_t z);
 void int16tostr (int16_t num, char* str_buff);
 
-FATFS FatFs;	/* FatFs system object */
+//FATFS FatFs;	/* FatFs system object */
+
+SdCard sdCard;
+
+int test_pin_name = GPIO_MAKE_PIN(GPIOB_IDX, 9U);
+gpio_output_pin_user_config_t testPin;
 
 static void SdCardTask(void *arg)
 {
@@ -105,7 +112,7 @@ static void SdCardTask(void *arg)
 	PRINTF("\nMounting file system to SD Card volume...\r\n");
 
 	/* Mount file system to the SDCARD volume */
-	fr = f_mount(SD, &FatFs);
+//	fr = f_mount(SD, &FatFs);
 	if(fr)
 	{
 	   PRINTF("\nError mounting file system\r\n");
@@ -195,7 +202,18 @@ int main (void)
    /* Initialize clocks, debug console interface and configure required pins */
    hardware_init();
 
-   OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 1024, NULL, 1, NULL, true, NULL);
+   /* Disable Memory Protection Unit */
+   MPU_HAL_Disable(MPU);
+
+	testPin.pinName = test_pin_name;
+	testPin.config.outputLogic = 0;
+	testPin.config.slewRate = kPortFastSlewRate;
+	testPin.config.driveStrength = kPortHighDriveStrength;
+	testPin.config.isOpenDrainEnabled = false;
+	GPIO_DRV_OutputPinInit(&testPin);
+
+	sdCard.Init(1);
+   //OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 1024, NULL, 1, NULL, true, NULL);
    OSA_TaskCreate((task_t)MainTask,   (uint8_t*)"Main Task",    1024, NULL, 2, NULL, true, NULL);
    //OSA_TaskCreate((task_t)FnetTask,   (uint8_t*)"FNET Task",    2048, NULL, 3, NULL, true, NULL);
 
@@ -226,18 +244,24 @@ void log_accel_values(int16_t x, int16_t y, int16_t z)
 	char		aux_string[100];
 	off_t		new_line;
 
+	GPIO_DRV_WritePinOutput(testPin.pinName, 1);
+
 	/* Open a text file */
 	fr = f_open(&fil, "log_data.txt", FA_WRITE | FA_OPEN_ALWAYS);
 	if(fr)
 	{
-		printf("\nError opening text file\r\n");
+		PRINTF("\nError opening text file\r\n");
 		for(;;){}
 	}
+
+	//GPIO_DRV_TogglePinOutput(testPin.pinName);
 
 	new_line = f_size(&fil);
 
 	/* Set file pointer to the start of new line in text file */
 	fr = f_lseek(&fil, new_line);
+
+	//GPIO_DRV_TogglePinOutput(testPin.pinName);
 
 	aux_string[0] = '\0';
 
@@ -256,17 +280,25 @@ void log_accel_values(int16_t x, int16_t y, int16_t z)
 	strcat(aux_string, str_number);
 	strcat(aux_string, "\r\n");
 
+	GPIO_DRV_TogglePinOutput(testPin.pinName);
+
 	/* Write the constructed string to the new line in text file */
 	fr = f_write(&fil, aux_string, strlen(aux_string), &bytes_written);
 
+	GPIO_DRV_TogglePinOutput(testPin.pinName);
+
 	if(fr)
 	{
-		printf("\nError logging data\r\n");
+	   PRINTF("\nError logging data\r\n");
 		for(;;){}
 	}
 
 	/* Close the text file */
 	fr = f_close(&fil);
+
+	//GPIO_DRV_TogglePinOutput(testPin.pinName);
+
+	GPIO_DRV_WritePinOutput(testPin.pinName, 0);
 }
 
 /*FUNCTION*----------------------------------------------------------------

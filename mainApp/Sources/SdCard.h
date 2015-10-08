@@ -8,14 +8,23 @@
 #ifndef SOURCES_SDCARD_H_
 #define SOURCES_SDCARD_H_
 
+#include <stdint.h>
+
+#include "diskio.h"
+#include "ff.h"
+
 class SdCard
 {
 public:
-	SdCard();
+   SdCard();
 
-	void Init();
+   void Init(uint16_t main_task_priority);
+
+   static void MainTaskWrapper(void* param);
+   void MainTask();
 
 private:
+   bool IsCardDetected();
 
 };
 
