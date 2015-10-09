@@ -16,7 +16,7 @@
 class SdCard
 {
 public:
-   SdCard();
+   SdCard(){}
 
    void Init(uint16_t main_task_priority);
 

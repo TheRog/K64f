@@ -38,119 +38,20 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "SdCard.h"
-
 #include "fsl_debug_console.h"
-
-#if (defined(TWR_K64F120M) || defined(FRDM_K64F) || defined(TWR_K60D100M) || \
-	defined(TWR_K21F120M) || defined(TWR_K65F180M))
 #include "fsl_mpu_hal.h"
-#endif
 
-bool sdhc_detect(void);
+#include "SdCard.h"
+#include "DRV_MPU9250.h"
+
 void log_accel_values(int16_t x, int16_t y, int16_t z);
 void int16tostr (int16_t num, char* str_buff);
 
-//FATFS FatFs;	/* FatFs system object */
-
 SdCard sdCard;
+DRV_MPU9250 drv_Mpu9250;
 
 int test_pin_name = GPIO_MAKE_PIN(GPIOB_IDX, 9U);
 gpio_output_pin_user_config_t testPin;
-
-static void SdCardTask(void *arg)
-{
-	FRESULT fr;		/* FatFs return code */
-	DRESULT ds;		/* Disk functions return code */
-
-	fxos_data_t sensorData;
-	fxos_handler_t i2cModule;
-	int16_t xData, yData, zData;
-
-	OSA_TimeDelay(1000);
-
-	/* Initialize the FXOS8700CQ */
-	i2cModule.i2cInstance = BOARD_I2C_FXOS8700CQ_INSTANCE;
-	FXOS_Init(&i2cModule, NULL);
-
-	/* Initialize SD Card detect input pin */
-	GPIO_DRV_InputPinInit(&sdhcCdPin[0]);
-
-	/* Initialize safe removal pin (SW3 = PTA4) */
-	GPIO_DRV_InputPinInit(&switchPins[1]);
-
-	PRINTF("\n****** KSDK: FatFs + SD CARD demo ******\r\n");
-
-	if(!sdhc_detect())
-	{
-	   PRINTF("\nPlease insert SD Card\r\n");
-
-		/* Wait for SD Card insertion */
-		while (!sdhc_detect());
-	}
-
-	PRINTF("\nSD Card inserted\r\n");
-
-	PRINTF("\nInitializing SD Card...\r\n");
-
-#if (defined(TWR_K64F120M) || defined(FRDM_K64F) || defined(TWR_K60D100M) || \
-	defined(TWR_K21F120M) || defined(TWR_K65F180M))
-	/* Disable Memory Protection Unit */
-	MPU_HAL_Disable(MPU);
-#endif
-
-	/* Initialize SDHC driver and SD Card */
-	ds = (DRESULT)disk_initialize(SD);
-	if(ds)
-	{
-	   PRINTF("\nFailed to initialize SD disk\r\n");
-		for(;;){}
-	}
-
-	/* Select current logical device driver (0 = USB, 1 = SD) */
-	fr = f_chdrive(SD);
-	PRINTF("\nMounting file system to SD Card volume...\r\n");
-
-	/* Mount file system to the SDCARD volume */
-//	fr = f_mount(SD, &FatFs);
-	if(fr)
-	{
-	   PRINTF("\nError mounting file system\r\n");
-		for(;;){}
-	}
-
-	PRINTF("\nLogging accelerometer values... \r\n");
-	PRINTF("\nNOTE: To safely remove SD Card, press and hold SW3\r\n");
-
-	for (;;)
-	{
-		// Get new accelerometer data.
-		FXOS_ReadData(&i2cModule, &sensorData);
-
-		// Get the X and Y data from the sensor data structure.
-		xData = (int16_t)((sensorData.accelXMSB << 8) | sensorData.accelXLSB);
-		yData = (int16_t)((sensorData.accelYMSB << 8) | sensorData.accelYLSB);
-		zData = (int16_t)((sensorData.accelZMSB << 8) | sensorData.accelZLSB);
-
-		PRINTF("\nx = %d  y = %d  z = %d\r\n", xData, yData, zData);
-
-		/* Check SW3 pin state */
-		if(GPIO_DRV_ReadPinInput(switchPins[1].pinName) == 0)
-		{
-		   PRINTF("\nHold SW3 pressed and remove SD Card\r\n");
-			while(GPIO_DRV_ReadPinInput(switchPins[1].pinName) == 0);
-		}
-
-		/* If SD card not present avoid logging */
-		if(sdhc_detect())
-		{
-			log_accel_values(xData, yData, zData);
-		}
-
-		/* Wait 1 second to read and log new data */
-		OSA_TimeDelay(1000);
-	}
-}
 
 static void FnetTask()
 {
@@ -174,6 +75,8 @@ static void MainTask(void *arg)
 {
    OSA_TimeDelay(500);
 
+   drv_Mpu9250.Init();
+
    PRINTF("\n****** uServer ******\r\n");
 
    LED1_EN; LED2_EN; LED3_EN;
@@ -181,7 +84,7 @@ static void MainTask(void *arg)
    int counter = 0;
    while(1)
    {
-      counter++;
+      drv_Mpu9250.Update();
 
       LED1_TOGGLE; OSA_TimeDelay(50);
       LED3_TOGGLE; OSA_TimeDelay(50);
@@ -192,6 +95,7 @@ static void MainTask(void *arg)
       LED2_TOGGLE; OSA_TimeDelay(50);
 
       OSA_TimeDelay(700);
+      counter++;
    }
 }
 
@@ -212,17 +116,22 @@ int main (void)
 	testPin.config.isOpenDrainEnabled = false;
 	GPIO_DRV_OutputPinInit(&testPin);
 
-	sdCard.Init(1);
-   //OSA_TaskCreate((task_t)SdCardTask, (uint8_t*)"SD Card Task", 1024, NULL, 1, NULL, true, NULL);
+//	drv_Mpu9250.Init();
+//	sdCard.Init(1);
+
    OSA_TaskCreate((task_t)MainTask,   (uint8_t*)"Main Task",    1024, NULL, 2, NULL, true, NULL);
    //OSA_TaskCreate((task_t)FnetTask,   (uint8_t*)"FNET Task",    2048, NULL, 3, NULL, true, NULL);
 
-   OSA_Start();
+   OSA_Start(); // This function will not return
 
    while(1);
 
    return(0);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// Old Functions
+///////////////////////////////////////////////////////////////////////////////
 
 /*FUNCTION*----------------------------------------------------------------
 *
@@ -299,27 +208,6 @@ void log_accel_values(int16_t x, int16_t y, int16_t z)
 	//GPIO_DRV_TogglePinOutput(testPin.pinName);
 
 	GPIO_DRV_WritePinOutput(testPin.pinName, 0);
-}
-
-/*FUNCTION*----------------------------------------------------------------
-* Function Name  : sdhc_detect
-* Comments       : Detect if the SD Card is present or not with a GPIO pin
-* Returns:	[0] - Card not available
-* 		[1] - Card is present
-*END*--------------------------------------------------------------------*/
-
-bool sdhc_detect(void)
-{
-	uint32_t value = 0;
-	if (sdhcCdPin[0].config.pullSelect == kPortPullUp) /* pull up */
-	{
-		value = GPIO_DRV_ReadPinInput(sdhcCdPin[0].pinName);
-		return (!value);
-	}
-	else /* pull down */
-	{
-		return (GPIO_DRV_ReadPinInput(sdhcCdPin[0].pinName));
-	}
 }
 
 /*FUNCTION*----------------------------------------------------------------

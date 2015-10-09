@@ -22,10 +22,6 @@ gpio_output_pin_user_config_t writePin;
 const int length = 128;
 char string[length];
 
-SdCard::SdCard()
-{
-}
-
 void SdCard::Init( uint16_t main_task_priority)
 {
    writePin.pinName = write_pin_name;

@@ -54,6 +54,9 @@ void hardware_init(void) {
 	/* Enable I2C pins */
 	configure_i2c_pins(BOARD_I2C_FXOS8700CQ_INSTANCE);
 
+	// Configure SPI pins
+	configure_spi_pins(0);
+
 	/* Init board clock */
 	BOARD_ClockInit();
 	dbg_uart_init();
