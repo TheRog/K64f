@@ -26,25 +26,36 @@ uint8_t sendBuffer[TRANSFER_SIZE] = {0};
 
 int32_t loopCount = 0;
 
-void SPI0_IRQHandler(void)
-//void ROGER_SPI_CALLBACK(void)
-{
-   DSPI_DRV_MasterIRQHandler(SPI0_IDX);
-   PRINTF("SPI: ISR Detected!!! \n\r");
-}
+//extern "C" {
+//void SPI0_IRQHandler(void)
+//{
+//   DSPI_DRV_MasterIRQHandler(SPI0_IDX);
+//   PRINTF("SPI: ISR Detected!!! \n\r");
+//}
+//void SPI1_IRQHandler(void)
+//{
+//   DSPI_DRV_MasterIRQHandler(SPI0_IDX);
+//   PRINTF("SPI: ISR Detected!!! \n\r");
+//}
+//void SPI2_IRQHandler(void)
+//{
+//   DSPI_DRV_MasterIRQHandler(SPI0_IDX);
+//   PRINTF("SPI: ISR Detected!!! \n\r");
+//}
+//}
 
 int32_t DRV_MPU9250::Init()
 {
    uint32_t calculatedBaudRate;
 
   // OSA_InstallIntHandler(42, SPI0_IRQHandler); //or 26
-   OSA_InstallIntHandler(SPI0_IRQn, SPI0_IRQHandler);
-   OSA_InstallIntHandler(SPI0_IRQn, SPI0_IRQHandler);
-
-   for(int x=0; x<85; x++)
-   {
-      OSA_InstallIntHandler(x, SPI0_IRQHandler);
-   }
+//   OSA_InstallIntHandler(SPI0_IRQn, SPI0_IRQHandler);
+//   OSA_InstallIntHandler(SPI0_IRQn, SPI0_IRQHandler);
+//
+//   for(int x=0; x<85; x++)
+//   {
+//      OSA_InstallIntHandler(x, SPI0_IRQHandler);
+//   }
 
    // Initialize the SPI peripheral
    dspi_status_t dspiResult;

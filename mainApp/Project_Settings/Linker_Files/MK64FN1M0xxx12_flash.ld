@@ -48,15 +48,10 @@
 */
 
 /* Entry Point */
-/* Entry Point */
 ENTRY(Reset_Handler)
 
 HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x0400;
-
-__ram_vector_table__ = 1; /* DM */
-
-/* STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;*/
-STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x1000;
+STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
 M_VECTOR_RAM_SIZE = DEFINED(__ram_vector_table__) ? 0x0400 : 0x0;
 
 /* Specify the memory areas */
@@ -64,8 +59,7 @@ MEMORY
 {
   m_interrupts          (RX)  : ORIGIN = 0x00000000, LENGTH = 0x00000400
   m_flash_config        (RX)  : ORIGIN = 0x00000400, LENGTH = 0x00000010
-  m_text                (RX)  : ORIGIN = 0x00000410, LENGTH = 0x000FEBF0  /* Original 0x000FFBF0 */
-  fapp_paramsrom        (RW)  : ORIGIN = 0x000FF000, LENGTH = 0x00001000  /*!!! 4KBytes = Last logical-block reserved for FNET params.*/
+  m_text                (RX)  : ORIGIN = 0x00000410, LENGTH = 0x000FFBF0
   m_data                (RW)  : ORIGIN = 0x1FFF0000, LENGTH = 0x00010000
   m_data_2              (RW)  : ORIGIN = 0x20000000, LENGTH = 0x00030000
 }

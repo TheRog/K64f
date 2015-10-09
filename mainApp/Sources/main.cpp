@@ -40,6 +40,8 @@
 
 #include "fsl_debug_console.h"
 #include "fsl_mpu_hal.h"
+#include "fsl_dspi_shared_function.h"
+#include "fsl_dspi_master_driver.h"
 
 #include "SdCard.h"
 #include "DRV_MPU9250.h"
@@ -59,8 +61,7 @@ static void FnetTask()
    OSA_TimeDelay(5000);
 
    /* Init UART. */
-    //fnet_cpu_serial_init(FNET_CFG_CPU_SERIAL_PORT_DEFAULT, 115200);
-   fnet_cpu_serial_init(4, 115200);
+    fnet_cpu_serial_init(FNET_CFG_CPU_SERIAL_PORT_DEFAULT, 115200);
 
     /* Enable Interrupts.*/
    fnet_cpu_irq_enable(0);
@@ -74,8 +75,6 @@ static void FnetTask()
 static void MainTask(void *arg)
 {
    OSA_TimeDelay(500);
-
-   drv_Mpu9250.Init();
 
    PRINTF("\n****** uServer ******\r\n");
 
@@ -116,10 +115,10 @@ int main (void)
 	testPin.config.isOpenDrainEnabled = false;
 	GPIO_DRV_OutputPinInit(&testPin);
 
-//	drv_Mpu9250.Init();
+	drv_Mpu9250.Init();
 //	sdCard.Init(1);
 
-   OSA_TaskCreate((task_t)MainTask,   (uint8_t*)"Main Task",    1024, NULL, 2, NULL, true, NULL);
+   OSA_TaskCreate((task_t)MainTask,   (uint8_t*)"Main Task",    2048, NULL, 2, NULL, true, NULL);
    //OSA_TaskCreate((task_t)FnetTask,   (uint8_t*)"FNET Task",    2048, NULL, 3, NULL, true, NULL);
 
    OSA_Start(); // This function will not return
@@ -245,7 +244,39 @@ void int16tostr (int16_t num, char* str_buff)
 	str_buff[j] = '\0';
 }
 
+
+
 extern "C" {
+
+void SPI0_IRQHandler(void)
+{
+   DSPI_DRV_MasterIRQHandler(SPI0_IDX);
+   PRINTF("SPI: ISR Detected!!! \n\r");
+}
+void SPI1_IRQHandler(void)
+{
+   DSPI_DRV_MasterIRQHandler(SPI1_IDX);
+   PRINTF("SPI: ISR Detected!!! \n\r");
+}
+void SPI2_IRQHandler(void)
+{
+   DSPI_DRV_MasterIRQHandler(SPI2_IDX);
+   PRINTF("SPI: ISR Detected!!! \n\r");
+}
+
+void HardFault_Handler(){
+   while(1);
+}
+void MemManage_Handler(){
+   while(1);
+}
+void BusFault_Handler(){
+   while(1);
+}
+void UsageFault_Handler(){
+   while(1);
+}
+
 void vApplicationMallocFailedHook( void )
 {
 	while(1);
