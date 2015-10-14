@@ -26,6 +26,9 @@ uint8_t sendBuffer[TRANSFER_SIZE] = {0};
 
 int32_t loopCount = 0;
 
+SPI_Type * dspiBaseAddr = (SPI_Type*)SPI0_BASE;
+dspi_command_config_t commandConfig;
+
 //extern "C" {
 //void SPI0_IRQHandler(void)
 //{
@@ -46,7 +49,7 @@ int32_t loopCount = 0;
 
 int32_t DRV_MPU9250::Init()
 {
-   uint32_t calculatedBaudRate;
+//   uint32_t calculatedBaudRate;
 
   // OSA_InstallIntHandler(42, SPI0_IRQHandler); //or 26
 //   OSA_InstallIntHandler(SPI0_IRQn, SPI0_IRQHandler);
@@ -57,51 +60,52 @@ int32_t DRV_MPU9250::Init()
 //      OSA_InstallIntHandler(x, SPI0_IRQHandler);
 //   }
 
-   // Initialize the SPI peripheral
-   dspi_status_t dspiResult;
-   dspi_master_state_t masterState;
+   uint32_t i;
+   uint32_t loopCount = 1;
+   SPI_Type * dspiBaseAddr = (SPI_Type*)SPI0_BASE;
+   uint32_t dspiSourceClock;
+   uint32_t calculatedBaudRate;
    dspi_device_t masterDevice;
-   dspi_master_user_config_t masterUserConfig;
-   masterUserConfig.isChipSelectContinuous     = false;
-   masterUserConfig.isSckContinuous            = false;
-   masterUserConfig.pcsPolarity                = kDspiPcs_ActiveLow;
-   masterUserConfig.whichCtar                  = kDspiCtar0;
-   masterUserConfig.whichPcs                   = kDspiPcs0;
 
-   // Setup the configuration.
+   commandConfig.isChipSelectContinuous = false,
+   commandConfig.whichCtar              = kDspiCtar0;
+   commandConfig.whichPcs               = kDspiPcs0;
+   commandConfig.clearTransferCount     = true;
+   commandConfig.isEndOfQueue           = false;
+
+   // Print a note.
+   PRINTF("\r\n DSPI board to board polling example");
+   PRINTF("\r\n This example run on instance 0 ");
+   PRINTF("\r\n Be sure DSPI0-DSPI0 are connected \n");
+
+   // Enable DSPI clock.
+   CLOCK_SYS_EnableSpiClock(DSPI_MASTER_INSTANCE);
+   // Initialize the DSPI module registers to default value, which disables the module
+   DSPI_HAL_Init(dspiBaseAddr);
+   // Set to master mode.
+   DSPI_HAL_SetMasterSlaveMode(dspiBaseAddr, kDspiMaster);
+   // Configure for continuous SCK operation
+   DSPI_HAL_SetContinuousSckCmd(dspiBaseAddr, false);
+   // Configure for peripheral chip select polarity
+   DSPI_HAL_SetPcsPolarityMode(dspiBaseAddr, kDspiPcs0, kDspiPcs_ActiveLow);
+   // Disable FIFO operation.
+   DSPI_HAL_SetFifoCmd(dspiBaseAddr, false, false);
+   // Initialize the configurable delays: PCS-to-SCK, prescaler = 0, scaler = 1
+   DSPI_HAL_SetDelay(dspiBaseAddr, kDspiCtar0, 0, 1, kDspiPcsToSck);
+   // DSPI system enable
+   DSPI_HAL_Enable(dspiBaseAddr);
+
+   // Configure baudrate.
    masterDevice.dataBusConfig.bitsPerFrame = 8;
    masterDevice.dataBusConfig.clkPhase     = kDspiClockPhase_FirstEdge;
    masterDevice.dataBusConfig.clkPolarity  = kDspiClockPolarity_ActiveHigh;
    masterDevice.dataBusConfig.direction    = kDspiMsbFirst;
 
-   PRINTF("SPI: Initializing SPI driver... \n\r");
-
-   // Initialize master driver.
-   dspiResult = DSPI_DRV_MasterInit(
-                           DSPI_MASTER_INSTANCE,
-                           &masterState,
-                           &masterUserConfig);
-   if (dspiResult != kStatus_DSPI_Success)
-   {
-     PRINTF("SPI: Can not initialize master driver \n\r");
-     return -1;
-   }
-
-   // Configure baudrate.
-   masterDevice.bitsPerSec = TRANSFER_BAUDRATE;
-   dspiResult = DSPI_DRV_MasterConfigureBus(
-                           DSPI_MASTER_INSTANCE,
-                           &masterDevice,
-                           &calculatedBaudRate);
-   if (dspiResult != kStatus_DSPI_Success)
-   {
-     PRINTF("SPI: failure in configuration bus\n\r");
-     return -1;
-   }
-   else
-   {
-     PRINTF("SPI: Transfer at baudrate %lu \r\n", calculatedBaudRate);
-   }
+   DSPI_HAL_SetDataFormat(dspiBaseAddr, kDspiCtar0, &masterDevice.dataBusConfig);
+   // Get DSPI source clock.
+   dspiSourceClock = CLOCK_SYS_GetSpiFreq(DSPI_MASTER_INSTANCE);
+   calculatedBaudRate = DSPI_HAL_SetBaudRate(dspiBaseAddr, kDspiCtar0, TRANSFER_BAUDRATE, dspiSourceClock);
+   PRINTF("\r\n Transfer at baudrate %lu \r\n", calculatedBaudRate);
 
 }
 
@@ -134,17 +138,48 @@ void DRV_MPU9250::Update()
    }
 
    // Send the data.
-   dspiResult = DSPI_DRV_MasterTransferBlocking(DSPI_MASTER_INSTANCE,
-                                               NULL,
-                                               sendBuffer,
-                                               NULL,
-                                               TRANSFER_SIZE,
-                                               MASTER_TRANSFER_TIMEOUT);
-   if (dspiResult != kStatus_DSPI_Success)
+//   dspiResult = DSPI_DRV_MasterTransferBlocking(DSPI_MASTER_INSTANCE,
+//                                               NULL,
+//                                               sendBuffer,
+//                                               NULL,
+//                                               TRANSFER_SIZE,
+//                                               MASTER_TRANSFER_TIMEOUT);
+
+//   dspiResult = DSPI_DRV_MasterTransfer(DSPI_MASTER_INSTANCE,
+//                                                  NULL,
+//                                                  sendBuffer,
+//                                                  NULL,
+//                                                  TRANSFER_SIZE);
+
+   // Restart the transfer by stop then start again, this will clear out the shift register
+   DSPI_HAL_StopTransfer(dspiBaseAddr);
+   // Flush the FIFOs
+   DSPI_HAL_SetFlushFifoCmd(dspiBaseAddr, true, true);
+   // Clear status flags that may have been set from previous transfers.
+   DSPI_HAL_ClearStatusFlag(dspiBaseAddr, kDspiTxComplete);
+   DSPI_HAL_ClearStatusFlag(dspiBaseAddr, kDspiEndOfQueue);
+   DSPI_HAL_ClearStatusFlag(dspiBaseAddr, kDspiTxFifoUnderflow);
+   DSPI_HAL_ClearStatusFlag(dspiBaseAddr, kDspiTxFifoFillRequest);
+   DSPI_HAL_ClearStatusFlag(dspiBaseAddr, kDspiRxFifoOverflow);
+   DSPI_HAL_ClearStatusFlag(dspiBaseAddr, kDspiRxFifoDrainRequest);
+   // Clear the transfer count.
+   DSPI_HAL_PresetTransferCount(dspiBaseAddr, 0);
+   // Start the transfer process in the hardware
+   DSPI_HAL_StartTransfer(dspiBaseAddr);
+   // Send the data to slave.
+   for (int i = 0; i < TRANSFER_SIZE; i++)
    {
-      PRINTF("\r\nERROR: send data error \n\r");
-      return;
+      // Write data to PUSHR
+      DSPI_HAL_WriteDataMastermodeBlocking(dspiBaseAddr, &commandConfig, sendBuffer[i]);
+      // Delay to wait slave is ready.
+      OSA_TimeDelay(1);
    }
+
+//   if (dspiResult != kStatus_DSPI_Success)
+//   {
+//      PRINTF("\r\nERROR: send data error \n\r");
+//      return;
+//   }
    // Wait until slave is ready to send.
 //   OSA_TimeDelay(100);
 

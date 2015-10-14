@@ -42,9 +42,12 @@
 #include "fsl_mpu_hal.h"
 #include "fsl_dspi_shared_function.h"
 #include "fsl_dspi_master_driver.h"
+#include "fsl_pit_driver.h"
 
 #include "SdCard.h"
 #include "DRV_MPU9250.h"
+
+#define BOARD_PIT_INSTANCE  0
 
 void log_accel_values(int16_t x, int16_t y, int16_t z);
 void int16tostr (int16_t num, char* str_buff);
@@ -76,6 +79,10 @@ static void MainTask(void *arg)
 {
    OSA_TimeDelay(500);
 
+   drv_Mpu9250.Init();
+
+   OSA_TimeDelay(500);
+
    PRINTF("\n****** uServer ******\r\n");
 
    LED1_EN; LED2_EN; LED3_EN;
@@ -83,7 +90,7 @@ static void MainTask(void *arg)
    int counter = 0;
    while(1)
    {
-      drv_Mpu9250.Update();
+      //drv_Mpu9250.Update();
 
       LED1_TOGGLE; OSA_TimeDelay(50);
       LED3_TOGGLE; OSA_TimeDelay(50);
@@ -115,10 +122,25 @@ int main (void)
 	testPin.config.isOpenDrainEnabled = false;
 	GPIO_DRV_OutputPinInit(&testPin);
 
-	drv_Mpu9250.Init();
-//	sdCard.Init(1);
+	// Structure of initialize PIT channel No.0
+   pit_user_config_t chn0Confg;
+   chn0Confg.isInterruptEnabled = true;
+   chn0Confg.periodUs = 1000000u;
 
-   OSA_TaskCreate((task_t)MainTask,   (uint8_t*)"Main Task",    2048, NULL, 2, NULL, true, NULL);
+   // Init pit module and enable run in debug
+   PIT_DRV_Init(BOARD_PIT_INSTANCE, false);
+
+   // Initialize PIT timer instance for channel 0 and 1
+   PIT_DRV_InitChannel(BOARD_PIT_INSTANCE, 0, &chn0Confg);
+
+   // Start channel 0
+   PRINTF("\n\rStarting channel No.0 ...");
+   PIT_DRV_StartTimer(BOARD_PIT_INSTANCE, 0);
+
+//	drv_Mpu9250.Init();
+	sdCard.Init(1);
+
+   OSA_TaskCreate((task_t)MainTask,   (uint8_t*)"Main Task",    4096, NULL, 2, NULL, true, NULL);
    //OSA_TaskCreate((task_t)FnetTask,   (uint8_t*)"FNET Task",    2048, NULL, 3, NULL, true, NULL);
 
    OSA_Start(); // This function will not return
@@ -127,6 +149,8 @@ int main (void)
 
    return(0);
 }
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Old Functions
@@ -262,6 +286,14 @@ void SPI2_IRQHandler(void)
 {
    DSPI_DRV_MasterIRQHandler(SPI2_IDX);
    PRINTF("SPI: ISR Detected!!! \n\r");
+}
+
+void PIT0_IRQHandler(void)
+{
+    /* Clear interrupt flag.*/
+    PIT_HAL_ClearIntFlag(g_pitBase[0], 0U);
+    //PRINTF("PITR ISR Detected!!! \n\r");
+    PRINTF(".");
 }
 
 void HardFault_Handler(){

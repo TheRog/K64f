@@ -24,7 +24,11 @@ public:
    void MainTask();
 
 private:
+   void InitializeSdCard();
    bool IsCardDetected();
+   FRESULT CreateIndexedFile(char* file_name, char* indexed_file_name);
+
+   //FIL      fil;        /* File object */
 
 };
 
