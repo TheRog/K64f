@@ -12,40 +12,37 @@
 #include "SdCard.h"
 #include "board.h"
 #include "fsl_debug_console.h"
-#include "fsl_os_abstraction.h"
 #include "fsl_mpu_hal.h"
 
-FIL      fil;        /* File object */
+SdCard* staticInstance;
 
-FATFS FatFs; /* FatFs system object */
-
-int write_pin_name = GPIO_MAKE_PIN(GPIOB_IDX, 9U);
-gpio_output_pin_user_config_t writePin;
-
-gpio_input_pin_user_config_t swInput;
-
-event_t switchPressedEvent;
-
-const int length = 128;
-char string[length];
-
-extern "C" {
-void PORTC_IRQHandler(void)
+void SdCard::PORTC_IRQHandler()
 {
    GPIO_DRV_ClearPinIntFlag (kGpioSW2); // Clear IRQ flag
+   staticInstance->SwPressed();
+}
+
+void SdCard::SwPressed()
+{
    PRINTF("SD_CARD: SW2 ISR\r\n");
    OSA_EventSet(&switchPressedEvent, 1);
 }
-}
 
-void SdCard::Init( uint16_t main_task_priority)
+void SdCard::Init(
+      uint16_t main_task_priority,
+      SdCardInterface* sd_interface
+      )
 {
-   writePin.pinName = write_pin_name;
-   writePin.config.outputLogic = 0;
-   writePin.config.slewRate = kPortFastSlewRate;
-   writePin.config.driveStrength = kPortHighDriveStrength;
-   writePin.config.isOpenDrainEnabled = false;
-   GPIO_DRV_OutputPinInit(&writePin);
+   staticInstance = this;
+
+   sdCardInterface = sd_interface;
+
+   sdDiagPin.pinName = kSdDiagPin;
+   sdDiagPin.config.outputLogic = 0;
+   sdDiagPin.config.slewRate = kPortFastSlewRate;
+   sdDiagPin.config.driveStrength = kPortHighDriveStrength;
+   sdDiagPin.config.isOpenDrainEnabled = false;
+   GPIO_DRV_OutputPinInit(&sdDiagPin);
 
    swInput.pinName = kGpioSW2;
    swInput.config.isPullEnable = true;
@@ -53,6 +50,8 @@ void SdCard::Init( uint16_t main_task_priority)
    swInput.config.isPassiveFilterEnabled = false;
    swInput.config.interrupt = kPortIntFallingEdge;
    GPIO_DRV_InputPinInit(&swInput); //SW2
+
+   OSA_InstallIntHandler(PORTC_IRQn, &SdCard::PORTC_IRQHandler);
 
    OSA_EventCreate(&switchPressedEvent, kEventAutoClear);
 
@@ -62,7 +61,7 @@ void SdCard::Init( uint16_t main_task_priority)
          1024, // Stack Size
          NULL, // Stack Memory
          main_task_priority, // Priority
-         NULL, // Parameters
+         this, // Parameters
          true, // Uses Floats
          NULL //Handler
          );
@@ -104,26 +103,25 @@ void SdCard::MainTask()
       PRINTF("SD_CARD: File created - %s \r\n", file_string);
       PRINTF("SD_CARD: Press SW2 to close file\r\n");
 
-      for(int i=0; i<length; i++)
-      {
-         string[i] = (char)i;
-      }
-
       OSA_EventClear(&switchPressedEvent, 1);
       while(1)
       {
          /* Write the constructed string to the new line in text file */
-         GPIO_DRV_WritePinOutput(writePin.pinName, 1);
-         fr = f_write(&fil, (void*)string, length, &bytes_written);
-         GPIO_DRV_WritePinOutput(writePin.pinName, 0);
+         GPIO_DRV_WritePinOutput(sdDiagPin.pinName, 1);
+         if(sdCardInterface)
+         {
+            uint32_t length = sdCardInterface->UpdateText(text, TextLength);
+            fr = f_write(&fil, (void*)text, length, &bytes_written);
+         }
+         GPIO_DRV_WritePinOutput(sdDiagPin.pinName, 0);
 
-         OSA_TimeDelay(5);
+         //OSA_TimeDelay(5);
 
-         GPIO_DRV_WritePinOutput(writePin.pinName, 1);
-         f_sync(&fil);
-         GPIO_DRV_WritePinOutput(writePin.pinName, 0);
-
-         OSA_TimeDelay(100);
+//         GPIO_DRV_WritePinOutput(sdDiagPin.pinName, 1);
+//         f_sync(&fil);
+//         GPIO_DRV_WritePinOutput(sdDiagPin.pinName, 0);
+//
+         OSA_TimeDelay(10);
 
          if(OSA_EventGetFlags(&switchPressedEvent))
          {

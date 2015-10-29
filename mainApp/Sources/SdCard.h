@@ -12,23 +12,56 @@
 
 #include "diskio.h"
 #include "ff.h"
+#include "fsl_gpio_driver.h"
+#include "fsl_os_abstraction.h"
+
+class SdCardInterface
+{
+public:
+   virtual uint32_t UpdateText(char* text, uint32_t max_length) = 0;
+};
 
 class SdCard
 {
 public:
    SdCard(){}
 
-   void Init(uint16_t main_task_priority);
+   void Init(
+         uint16_t main_task_priority,
+         SdCardInterface* sd_interface
+         );
 
+   // Main Task
    static void MainTaskWrapper(void* param);
    void MainTask();
 
 private:
    void InitializeSdCard();
    bool IsCardDetected();
+
+   static void PORTC_IRQHandler(); // Static ISR
+   void SwPressed(); // Called from the ISR
+
+   // Auto increment and create file
    FRESULT CreateIndexedFile(char* file_name, char* indexed_file_name);
 
-   //FIL      fil;        /* File object */
+   SdCardInterface* sdCardInterface;
+
+   FATFS   FatFs;    /* FatFs system object */
+   FIL     fil;      /* File object */
+
+   event_t switchPressedEvent;
+
+   gpio_output_pin_user_config_t sdDiagPin;
+
+   gpio_input_pin_user_config_t swInput;
+
+   //Temporary write string
+   static const int length = 128;
+   char string[length];
+
+   static const uint32_t TextLength = 1024;
+   char text[TextLength];
 
 };
 

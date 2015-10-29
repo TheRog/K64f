@@ -47,6 +47,9 @@
 #include "SdCard.h"
 #include "DRV_MPU9250.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+
 #define BOARD_PIT_INSTANCE  0
 
 void log_accel_values(int16_t x, int16_t y, int16_t z);
@@ -57,6 +60,20 @@ DRV_MPU9250 drv_Mpu9250;
 
 int test_pin_name = GPIO_MAKE_PIN(GPIOB_IDX, 9U);
 gpio_output_pin_user_config_t testPin;
+
+static int idle_counts = 0;
+
+class SdCardOutputStream : public SdCardInterface
+{
+   virtual uint32_t UpdateText(char* text, uint32_t max_length)
+   {
+      int bytes_written = 0;
+      bytes_written += snprintf(text, max_length, "Timestamp = %d\r\n", OSA_TimeGetMsec());
+      return bytes_written;
+   }
+};
+
+SdCardOutputStream sdCardOutputStream;
 
 static void FnetTask()
 {
@@ -138,7 +155,7 @@ int main (void)
    PIT_DRV_StartTimer(BOARD_PIT_INSTANCE, 0);
 
 //	drv_Mpu9250.Init();
-	sdCard.Init(1);
+	sdCard.Init(1, &sdCardOutputStream);
 
    OSA_TaskCreate((task_t)MainTask,   (uint8_t*)"Main Task",    4096, NULL, 2, NULL, true, NULL);
    //OSA_TaskCreate((task_t)FnetTask,   (uint8_t*)"FNET Task",    2048, NULL, 3, NULL, true, NULL);
@@ -288,12 +305,17 @@ void SPI2_IRQHandler(void)
    PRINTF("SPI: ISR Detected!!! \n\r");
 }
 
+const int buffer_length = 1024;
+char buffer[buffer_length];
 void PIT0_IRQHandler(void)
 {
     /* Clear interrupt flag.*/
     PIT_HAL_ClearIntFlag(g_pitBase[0], 0U);
     //PRINTF("PITR ISR Detected!!! \n\r");
-    PRINTF(".");
+    //PRINTF(".");
+
+    PRINTF("%d\r\n", idle_counts);
+    idle_counts = 0;
 }
 
 void HardFault_Handler(){
@@ -311,6 +333,23 @@ void UsageFault_Handler(){
 
 void vApplicationMallocFailedHook( void )
 {
-	while(1);
+   taskDISABLE_INTERRUPTS();
+   for( ;; );
 }
+
+void vApplicationIdleHook( void )
+{
+   /* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
+   to 1 in FreeRTOSConfig.h.  It will be called on each iteration of the idle
+   task.  It is essential that code added to this hook function never attempts
+   to block in any way (for example, call xQueueReceive() with a block time
+   specified, or call vTaskDelay()).  If the application makes use of the
+   vTaskDelete() API function (as this demo application does) then it is also
+   important that vApplicationIdleHook() is permitted to return to its calling
+   function, because it is the responsibility of the idle task to clean up
+   memory allocated by the kernel to any task that has since been deleted. */
+
+   idle_counts++;
+}
+
 }
